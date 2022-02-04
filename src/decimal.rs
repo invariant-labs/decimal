@@ -28,33 +28,8 @@ impl Display for Decimal {
 }
 
 impl Decimal {
-    pub fn new(value: u128) -> Decimal {
-        Decimal { v: value }
-    }
-
-    pub fn from_integer(integer: u128) -> Decimal {
-        Decimal::new(integer * DENOMINATOR)
-    }
-
-    pub fn one() -> Decimal {
-        Decimal::new(DENOMINATOR)
-    }
-
-    pub fn from_decimal(val: u128, scale: u8) -> Decimal {
-        if SCALE > scale {
-            Decimal::new(val * 10u128.pow((SCALE - scale).into()))
-        } else {
-            let denominator = 10u128.checked_pow((scale - SCALE).into()).unwrap();
-            Decimal::new(val.checked_div(denominator).unwrap())
-        }
-    }
-
     pub fn is_zero(self) -> bool {
         self.v == 0
-    }
-
-    pub fn from_token_amount(amount: TokenAmount) -> Decimal {
-        Decimal::from_integer(amount.0.into())
     }
 
     pub fn div_up(self, other: Decimal) -> Decimal {
