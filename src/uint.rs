@@ -13,3 +13,58 @@ construct_uint! {
 construct_uint! {
     pub struct U192(3);
 }
+
+pub const fn to_U256(n: u128) -> U256 {
+    U256([n as u64, (n >> 64) as u64, 0, 0])
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_to_U256() {
+        {
+            let from = 0;
+            let result = to_U256(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = 1;
+            let result = to_U256(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = 1324342342433342342;
+            let result = to_U256(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = u64::MAX as u128;
+            let result = to_U256(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = u64::MAX as u128 + 1;
+            let result = to_U256(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = u64::MAX as u128 + 2;
+            let result = to_U256(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = u128::MAX;
+            let result = to_U256(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+    }
+}
