@@ -1,20 +1,16 @@
-use anchor_lang::prelude::*;
 use integer_sqrt::IntegerSquareRoot;
 use std::{convert::TryInto, fmt::Display};
 
-use crate::token_amount::*;
 use crate::traits::*;
 use crate::uint::U256;
 
 pub const SCALE: u8 = 12;
 pub const DENOMINATOR: u128 = 10u128.pow(SCALE as u32);
 
-#[zero_copy]
-#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, AnchorDeserialize, AnchorSerialize)]
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Decimal {
     pub v: u128,
 }
-// pub struct Decimal::new(pub u128);
 
 impl Display for Decimal {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -32,37 +28,25 @@ impl Decimal {
         self.v == 0
     }
 
-    pub fn div_up(self, other: Decimal) -> Decimal {
-        Decimal::new(
-            self.v
-                .checked_mul(DENOMINATOR)
-                .unwrap()
-                .checked_add(other.v.checked_sub(1).unwrap())
-                .unwrap()
-                .checked_div(other.v)
-                .unwrap(),
-        )
-    }
-
     pub fn sqrt(self) -> Decimal {
         Decimal::new(self.v.checked_mul(DENOMINATOR).unwrap().integer_sqrt())
     }
 
-    pub fn to_token_floor(self) -> TokenAmount {
-        TokenAmount(self.v.checked_div(DENOMINATOR).unwrap().try_into().unwrap())
-    }
+    // pub fn to_token_floor(self) -> TokenAmount {
+    //     TokenAmount(self.v.checked_div(DENOMINATOR).unwrap().try_into().unwrap())
+    // }
 
-    pub fn to_token_ceil(self) -> TokenAmount {
-        TokenAmount(
-            self.v
-                .checked_add(DENOMINATOR.checked_sub(1).unwrap())
-                .unwrap()
-                .checked_div(DENOMINATOR)
-                .unwrap()
-                .try_into()
-                .unwrap(),
-        )
-    }
+    // pub fn to_token_ceil(self) -> TokenAmount {
+    //     TokenAmount(
+    //         self.v
+    //             .checked_add(DENOMINATOR.checked_sub(1).unwrap())
+    //             .unwrap()
+    //             .checked_div(DENOMINATOR)
+    //             .unwrap()
+    //             .try_into()
+    //             .unwrap(),
+    //     )
+    // }
 }
 
 pub trait Pow<T>: Sized {
@@ -109,7 +93,7 @@ impl Pow<i128> for Decimal {
 }
 
 impl OpsUp<Decimal> for Decimal {
-    fn mul_up(self, other: Decimal) -> Decimal {
+    fn mul_up(&self, other: &Decimal) -> Decimal {
         Decimal::new(
             self.v
                 .checked_mul(other.v)
@@ -121,7 +105,7 @@ impl OpsUp<Decimal> for Decimal {
         )
     }
 
-    fn div_up(self, other: Decimal) -> Decimal {
+    fn div_up(&self, other: &Decimal) -> Decimal {
         Decimal::new(
             self.v
                 .checked_mul(DENOMINATOR)
@@ -134,25 +118,35 @@ impl OpsUp<Decimal> for Decimal {
     }
 }
 
-impl OpsUp<TokenAmount> for Decimal {
-    fn mul_up(self, other: TokenAmount) -> TokenAmount {
-        TokenAmount(
-            self.v
-                .checked_mul(other.0 as u128)
-                .unwrap()
-                .checked_add(DENOMINATOR.checked_sub(1).unwrap())
-                .unwrap()
-                .checked_div(DENOMINATOR)
-                .unwrap()
-                .try_into()
-                .unwrap(),
-        )
-    }
+// impl OpsUp<TokenAmount> for Decimal {
+//     fn mul_up(self, other: TokenAmount) -> TokenAmount {
+//         TokenAmount(
+//             self.v
+//                 .checked_mul(other.0 as u128)
+//                 .unwrap()
+//                 .checked_add(DENOMINATOR.checked_sub(1).unwrap())
+//                 .unwrap()
+//                 .checked_div(DENOMINATOR)
+//                 .unwrap()
+//                 .try_into()
+//                 .unwrap(),
+//         )
+//     }
 
-    fn div_up(self, other: TokenAmount) -> TokenAmount {
-        TokenAmount(0)
-    }
-}
+//     fn div_up(self, other: TokenAmount) -> TokenAmount {
+//         TokenAmount(
+//             self.v
+//                 .checked_mul(other.0 as u128)
+//                 .unwrap()
+//                 .checked_add(DENOMINATOR.checked_sub(1).unwrap())
+//                 .unwrap()
+//                 .checked_div(DENOMINATOR)
+//                 .unwrap()
+//                 .try_into()
+//                 .unwrap(),
+//         )
+//     }
+// }
 
 #[cfg(test)]
 mod tests {
@@ -195,24 +189,24 @@ mod tests {
         {
             let a = Decimal::new(1);
             let b = Decimal::new(1);
-            assert_eq!(a.mul_up(b), Decimal::new(1));
+            assert_eq!(a.mul_up(&b), Decimal::new(1));
         }
         // mul calculable without precision loss
         {
             let a = Decimal::from_integer(1);
             let b = Decimal::from_integer(3) / Decimal::new(10);
-            assert_eq!(a.mul_up(b), b);
+            assert_eq!(a.mul_up(&b), b);
         }
-        {
-            let a = Decimal::from_integer(1);
-            let b = TokenAmount(1);
-            assert_eq!(a.mul_up(b), TokenAmount(1));
-        }
-        {
-            let a = Decimal::from_integer(3) / Decimal::from_integer(10);
-            let b = TokenAmount(3);
-            assert_eq!(a.mul_up(b), TokenAmount(1));
-        }
+        // {
+        //     let a = &Decimal::from_integer(1);
+        //     let b = TokenAmount(1);
+        //     assert_eq!(a.mul_up(b), TokenAmount(1));
+        // }
+        // {
+        //     let a = Decimal::from_integer(3) / Decimal::from_integer(10);
+        //     let b = TokenAmount(3);
+        //     assert_eq!(a.mul_up(b), TokenAmount(1));
+        // }
     }
 
     #[test]
@@ -221,24 +215,24 @@ mod tests {
         {
             let a = Decimal::new(0);
             let b = Decimal::new(1);
-            assert_eq!(a.div_up(b), Decimal::new(0));
+            assert_eq!(a.div_up(&b), Decimal::new(0));
         }
         // div check rounding up
         {
             let a = Decimal::new(1);
             let b = Decimal::from_integer(2);
-            assert_eq!(a.div_up(b), Decimal::new(1));
+            assert_eq!(a.div_up(&b), Decimal::new(1));
         }
         // div big number
         {
             let a = Decimal::new(200_000_000_001);
             let b = Decimal::from_integer(2);
-            assert_eq!(a.div_up(b), Decimal::new(100_000_000_001));
+            assert_eq!(a.div_up(&b), Decimal::new(100_000_000_001));
         }
         {
             let a = Decimal::new(42);
             let b = Decimal::from_integer(10);
-            assert_eq!(a.div_up(b), Decimal::new(5));
+            assert_eq!(a.div_up(&b), Decimal::new(5));
         }
     }
 
@@ -363,28 +357,28 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_to_token() {
-        // equal
-        {
-            let d = Decimal::from_integer(1);
+    // #[test]
+    // fn test_to_token() {
+    //     // equal
+    //     {
+    //         let d = Decimal::from_integer(1);
 
-            assert_eq!(d.to_token_floor(), TokenAmount(1));
-            assert_eq!(d.to_token_ceil(), TokenAmount(1));
-        }
-        // little over
-        {
-            let d = Decimal::from_integer(1) + Decimal::new(1);
+    //         assert_eq!(d.to_token_floor(), TokenAmount(1));
+    //         assert_eq!(d.to_token_ceil(), TokenAmount(1));
+    //     }
+    //     // little over
+    //     {
+    //         let d = Decimal::from_integer(1) + Decimal::new(1);
 
-            assert_eq!(d.to_token_floor(), TokenAmount(1));
-            assert_eq!(d.to_token_ceil(), TokenAmount(2));
-        }
-        // little below
-        {
-            let d = Decimal::from_integer(2) - Decimal::new(1);
+    //         assert_eq!(d.to_token_floor(), TokenAmount(1));
+    //         assert_eq!(d.to_token_ceil(), TokenAmount(2));
+    //     }
+    //     // little below
+    //     {
+    //         let d = Decimal::from_integer(2) - Decimal::new(1);
 
-            assert_eq!(d.to_token_floor(), TokenAmount(1));
-            assert_eq!(d.to_token_ceil(), TokenAmount(2));
-        }
-    }
+    //         assert_eq!(d.to_token_floor(), TokenAmount(1));
+    //         assert_eq!(d.to_token_ceil(), TokenAmount(2));
+    //     }
+    // }
 }

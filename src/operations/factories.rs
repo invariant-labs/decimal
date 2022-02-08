@@ -1,5 +1,4 @@
 use crate::decimal::{Decimal, DENOMINATOR, SCALE};
-use crate::token_amount::TokenAmount;
 
 impl Decimal {
     pub fn new(value: u128) -> Decimal {
@@ -21,10 +20,6 @@ impl Decimal {
             let denominator = 10u128.checked_pow((scale - SCALE).into()).unwrap();
             Decimal::new(val.checked_div(denominator).unwrap())
         }
-    }
-
-    pub fn from_token_amount(amount: TokenAmount) -> Decimal {
-        Decimal::from_integer(amount.0.into())
     }
 }
 
