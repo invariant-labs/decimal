@@ -5,12 +5,12 @@ pub mod uint;
 
 pub use crate::uint::U256;
 
-// use decimal_core::decimal;
+use decimal_core::decimal;
 
-// #[decimal(12)]
-// struct D(u128);
+#[decimal(12)]
+struct D(u128);
 
-#[cfg(tests)]
+#[cfg(test)]
 pub mod tests {
     use super::*;
 

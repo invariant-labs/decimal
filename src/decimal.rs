@@ -1,5 +1,5 @@
 use integer_sqrt::IntegerSquareRoot;
-use std::{convert::TryInto, fmt::Display};
+use std::fmt::Display;
 
 use crate::traits::*;
 use crate::uint::U256;
