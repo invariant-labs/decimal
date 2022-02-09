@@ -1,5 +1,5 @@
 use proc_macro::TokenStream;
-use std::str::FromStr;
+use quote::quote;
 
 #[proc_macro_attribute]
 pub fn decimal(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -10,20 +10,22 @@ pub fn decimal(attr: TokenStream, item: TokenStream) -> TokenStream {
         Err(_) => panic!("print_macro: invalid scale"),
     };
 
-    let scale_definition =
-        TokenStream::from_str(&format!("pub const SCALE: u8 = {};", parsed_scale)).unwrap();
+    let scale_definition = quote!(pub const SCALE: u8 = #parsed_scale;);
 
-    c.extend(scale_definition);
-    c.extend(
-        TokenStream::from_str(
-            "impl D {
-                fn get_scale(&self) -> u8{
-                    SCALE
-                }
-            }",
-        )
-        .unwrap(),
+    let get_scale_definition = quote!(
+
+        impl D {
+            fn get_scale(&self) -> u8{
+                SCALE
+            }
+        }
+
     );
+
+    c.extend(proc_macro::TokenStream::from(quote! {
+        #scale_definition
+        #get_scale_definition
+    }));
 
     c
 }
