@@ -8,7 +8,7 @@ pub use crate::uint::U256;
 use decimal_core::decimal;
 
 #[decimal(12)]
-struct D(u128);
+struct D(u8);
 
 #[cfg(test)]
 pub mod tests {
@@ -16,8 +16,9 @@ pub mod tests {
 
     #[test]
     pub fn flow() {
-        let d = D(12);
+        let d = D(42);
 
         assert_eq!(d.get_scale(), 12);
+        assert_eq!(d.get_value(), 42);
     }
 }
