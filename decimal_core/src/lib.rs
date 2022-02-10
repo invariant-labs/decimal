@@ -5,12 +5,18 @@ use quote::{quote, ToTokens};
 
 use syn::parse_macro_input;
 
+mod ops;
+
+use ops::*;
+
 #[proc_macro_attribute]
 pub fn decimal(attr: TokenStream, item: TokenStream) -> TokenStream {
     let parsed_scale = match attr.to_string().parse::<u8>() {
         Ok(scale) => scale,
         Err(_) => panic!("print_macro: invalid scale"),
     };
+
+    assert!(parsed_scale <= 38, "scale too big");
 
     let k = item.clone();
     let decimal_struct = parse_macro_input!(k as syn::ItemStruct);
@@ -26,23 +32,42 @@ pub fn decimal(attr: TokenStream, item: TokenStream) -> TokenStream {
     };
 
     let struct_name = decimal_struct.ident;
+    let denominator = 10u128.pow(parsed_scale as u32);
 
-    let get_scale_definition = quote!(
+    let struct_implementation = quote!(
 
         impl Decimal<#underlying_type> for #struct_name {
-            fn get_scale(&self) -> u8{
+            fn get_scale(&self) -> u8 {
                 #parsed_scale
             }
 
             fn get_value(&self) -> #underlying_type {
-                self.#field_name
+                self.#field_name.into()
             }
 
-
+            fn get_one<T: TryFrom<u128>>(&self) -> T {
+                match T::try_from(#denominator) {
+                    Ok(v) => v,
+                    Err(_) => panic!("could get one from a decimal",),
+                }
+            }
         }
 
         // this should be an impl of From but getting errors :(
         impl #struct_name {
+            fn new(value: #underlying_type) -> #struct_name {
+                let mut created = #struct_name::default();
+                created.#field_name = value;
+                created
+            }
+
+            fn one(value: #underlying_type) -> #struct_name {
+                let mut created = #struct_name::default();
+                created.#field_name = value;
+                created
+            }
+
+
             fn here<T: TryFrom<#underlying_type>>(&self) -> T {
                 match T::try_from(self.#field_name) {
                     Ok(v) => v,
@@ -53,30 +78,12 @@ pub fn decimal(attr: TokenStream, item: TokenStream) -> TokenStream {
 
     );
 
-    println!(
-        "CCC {}",
-        quote!(
-                    // this should be an impl of Into but getting errors :(
-                        impl #struct_name {
-                            fn here<T: TryFrom<#underlying_type>(&self) -> T {
-
-                                universal_into::<T, #underlying_type>(self.#field_name)
-
-                                // match self.#field_name.try_into() {
-                                //     Ok(v) => v,
-                                //     Err(_) => panic!("could not parse {} to {}", "T", "u8"),
-                                // }
-                            }
-                        }
-        )
-        .to_token_stream()
-        .to_string()
-    );
-
     let mut result = item.clone();
     result.extend(proc_macro::TokenStream::from(quote! {
-        #get_scale_definition
+        #struct_implementation
     }));
+
+    result.extend(generate_ops(struct_name));
 
     result
 }

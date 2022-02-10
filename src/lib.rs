@@ -9,9 +9,12 @@ use decimal_core::decimal;
 
 use std::convert::TryInto;
 
-trait Decimal<T> {
+use std::ops::Add;
+
+pub trait Decimal<T> {
     fn get_scale(&self) -> u8;
     fn get_value(&self) -> T;
+    fn get_one<Y: TryFrom<u128>>(&self) -> Y;
 }
 
 fn universal_into<Y, T: TryInto<Y>>(a: T) -> Y {
@@ -21,12 +24,14 @@ fn universal_into<Y, T: TryInto<Y>>(a: T) -> Y {
     }
 }
 
-#[decimal(12)]
-struct N(u8);
+#[decimal(3)]
+#[derive(Default, Debug, PartialEq)]
+struct N(u32);
 
-#[decimal(12)]
+#[decimal(2)]
+#[derive(Default, Debug, PartialEq)]
 struct K {
-    v: u8,
+    v: u32,
 }
 
 #[cfg(test)]
@@ -34,9 +39,39 @@ pub mod tests {
     use super::*;
 
     #[test]
-    pub fn tr() {
+    fn tr() {
         assert_eq!(universal_into::<u8, u16>(255), 255);
         assert_eq!(universal_into::<u8, u8>(255), 255);
+    }
+
+    #[test]
+    fn test_add() {
+        let a = N(1);
+        let b = N(1);
+        assert_eq!(a + b, N(2));
+    }
+
+    #[test]
+    fn default() {
+        assert_eq!(N::new(1), N(1));
+    }
+
+    #[test]
+    fn test_get_one() {
+        let n = N(0);
+        assert_eq!(n.get_one::<u128>(), 1000);
+    }
+
+    #[test]
+    fn test_mull() {
+        let n = N(200);
+        let k = K { v: 300 };
+        assert_eq!(
+            (n.get_value().checked_mul(k.here()).unwrap())
+                .checked_div(k.get_one())
+                .unwrap(),
+            600
+        );
     }
 
     #[test]
@@ -50,12 +85,12 @@ pub mod tests {
     pub fn flow() {
         let d = N(42);
 
-        assert_eq!(d.get_scale(), 12);
+        assert_eq!(d.get_scale(), 3);
         assert_eq!(d.get_value(), 42);
 
         let t = K { v: 42 };
 
-        assert_eq!(t.get_scale(), 12);
+        assert_eq!(t.get_scale(), 2);
         assert_eq!(t.get_value(), 42);
     }
 }
