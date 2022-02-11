@@ -1,4 +1,4 @@
-use proc_macro::TokenStream;
+use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 
 // use parse_decimal::{parse_struct, StructType};
@@ -6,11 +6,15 @@ use quote::{quote, ToTokens};
 use syn::parse_macro_input;
 
 mod ops;
+mod utils;
 
 use ops::*;
 
 #[proc_macro_attribute]
-pub fn decimal(attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn decimal(
+    attr: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
     let parsed_scale = match attr.to_string().parse::<u8>() {
         Ok(scale) => scale,
         Err(_) => panic!("print_macro: invalid scale"),

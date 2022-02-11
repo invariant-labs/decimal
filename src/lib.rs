@@ -9,7 +9,7 @@ use decimal_core::decimal;
 
 use std::convert::TryInto;
 
-use std::ops::Add;
+use std::ops::{Add, Div, Mul, Sub};
 
 pub trait Decimal<T> {
     fn get_scale(&self) -> u8;
