@@ -7,22 +7,28 @@ pub use crate::uint::U256;
 
 use decimal_core::decimal;
 
-use std::convert::TryInto;
+use std::{
+    fmt::Debug,
+    ops::{Add, Div, Mul, Sub},
+    panic,
+};
 
-use std::ops::{Add, Div, Mul, Sub};
+pub trait Decimal {
+    type U: Debug + Default;
 
-pub trait Decimal<T> {
-    fn get_scale(&self) -> u8;
-    fn get_value(&self) -> T;
-    fn get_one<Y: TryFrom<u128>>(&self) -> Y;
+    fn scale(&self) -> u8;
+    fn get(&self) -> Self::U;
+    fn new(value: Self::U) -> Self;
+    fn here<Y: TryFrom<Self::U>>(&self) -> Y;
+    fn one<T: TryFrom<u128>>() -> T;
 }
 
-fn universal_into<Y, T: TryInto<Y>>(a: T) -> Y {
-    match a.try_into() {
-        Ok(v) => v,
-        Err(_) => panic!("could not parse {} to {}", "T", "u8"),
-    }
-}
+// fn universal_into<Y, T: TryInto<Y>>(a: T) -> Y {
+//     match a.try_into() {
+//         Ok(v) => v,
+//         Err(_) => panic!("could not parse {} to {}", "T", "u8"),
+//     }
+// }
 
 #[decimal(3)]
 #[derive(Default, Debug, PartialEq)]
@@ -39,9 +45,10 @@ pub mod tests {
     use super::*;
 
     #[test]
-    fn tr() {
-        assert_eq!(universal_into::<u8, u16>(255), 255);
-        assert_eq!(universal_into::<u8, u8>(255), 255);
+    fn test_mul() {
+        let a = K::new(1);
+        let b = N::new(1000);
+        assert_eq!(a * b, K::new(1));
     }
 
     #[test]
@@ -58,8 +65,7 @@ pub mod tests {
 
     #[test]
     fn test_get_one() {
-        let n = N(0);
-        assert_eq!(n.get_one::<u128>(), 1000);
+        assert_eq!(N::one::<u128>(), 1000);
     }
 
     #[test]
@@ -67,8 +73,8 @@ pub mod tests {
         let n = N(200);
         let k = K { v: 300 };
         assert_eq!(
-            (n.get_value().checked_mul(k.here()).unwrap())
-                .checked_div(k.get_one())
+            (n.get().checked_mul(k.here()).unwrap())
+                .checked_div(K::one())
                 .unwrap(),
             600
         );
@@ -85,12 +91,12 @@ pub mod tests {
     pub fn flow() {
         let d = N(42);
 
-        assert_eq!(d.get_scale(), 3);
-        assert_eq!(d.get_value(), 42);
+        assert_eq!(d.scale(), 3);
+        assert_eq!(d.get(), 42);
 
         let t = K { v: 42 };
 
-        assert_eq!(t.get_scale(), 2);
-        assert_eq!(t.get_value(), 42);
+        assert_eq!(t.scale(), 2);
+        assert_eq!(t.get(), 42);
     }
 }

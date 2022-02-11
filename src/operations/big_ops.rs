@@ -1,11 +1,11 @@
-use crate::uint::{to_U256, U256};
+use crate::uint::{to_u256, U256};
 use crate::{
     decimal::{Decimal, DENOMINATOR},
     traits::BigOps,
 };
 
-const DENOMINATOR_U256: U256 = to_U256(DENOMINATOR);
-const ALMOST_DEN_U256: U256 = to_U256(DENOMINATOR - 1);
+const DENOMINATOR_U256: U256 = to_u256(DENOMINATOR);
+const ALMOST_DEN_U256: U256 = to_u256(DENOMINATOR - 1);
 
 impl BigOps<Decimal> for Decimal {
     fn big_mul(&self, other: &Decimal) -> Decimal {

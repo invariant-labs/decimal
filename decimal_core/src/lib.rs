@@ -1,4 +1,3 @@
-use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 
 // use parse_decimal::{parse_struct, StructType};
@@ -40,16 +39,31 @@ pub fn decimal(
 
     let struct_implementation = quote!(
 
-        impl Decimal<#underlying_type> for #struct_name {
-            fn get_scale(&self) -> u8 {
+        impl Decimal for #struct_name {
+            type U = #underlying_type;
+
+            fn scale(&self) -> u8 {
                 #parsed_scale
             }
 
-            fn get_value(&self) -> #underlying_type {
+            fn get(&self) -> #underlying_type {
                 self.#field_name.into()
             }
 
-            fn get_one<T: TryFrom<u128>>(&self) -> T {
+            fn new(value: #underlying_type) -> #struct_name {
+                let mut created = #struct_name::default();
+                created.#field_name = value;
+                created
+            }
+
+            fn here<T: TryFrom<#underlying_type>>(&self) -> T {
+                match T::try_from(self.#field_name) {
+                    Ok(v) => v,
+                    Err(_) => panic!("could not parse {} to {}", "T", "u8"),
+                }
+            }
+
+             fn one<T: TryFrom<u128>>() -> T {
                 match T::try_from(#denominator) {
                     Ok(v) => v,
                     Err(_) => panic!("could get one from a decimal",),
@@ -59,25 +73,7 @@ pub fn decimal(
 
         // this should be an impl of From but getting errors :(
         impl #struct_name {
-            fn new(value: #underlying_type) -> #struct_name {
-                let mut created = #struct_name::default();
-                created.#field_name = value;
-                created
-            }
 
-            fn one(value: #underlying_type) -> #struct_name {
-                let mut created = #struct_name::default();
-                created.#field_name = value;
-                created
-            }
-
-
-            fn here<T: TryFrom<#underlying_type>>(&self) -> T {
-                match T::try_from(self.#field_name) {
-                    Ok(v) => v,
-                    Err(_) => panic!("could not parse {} to {}", "T", "u8"),
-                }
-            }
         }
 
     );
@@ -87,7 +83,7 @@ pub fn decimal(
         #struct_implementation
     }));
 
-    result.extend(generate_ops(struct_name));
+    result.extend(generate_ops(struct_name, underlying_type));
 
     result
 }
