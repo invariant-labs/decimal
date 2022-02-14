@@ -2,12 +2,15 @@ use quote::quote;
 use syn::Ident;
 
 use crate::utils::string_to_ident;
+use crate::DecimalCharacteristics;
 
-pub fn generate_ops(
-    struct_name: Ident,
-    // field_name: Ident,
-    underlying_type: proc_macro2::TokenStream,
-) -> proc_macro::TokenStream {
+pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::TokenStream {
+    let DecimalCharacteristics {
+        struct_name,
+        underlying_type,
+        ..
+    } = characteristics;
+
     let name_str = &struct_name.to_string();
 
     let module_name = string_to_ident("tests_", &name_str);

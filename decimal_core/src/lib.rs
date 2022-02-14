@@ -1,13 +1,14 @@
+use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
-
-// use parse_decimal::{parse_struct, StructType};
-
 use syn::parse_macro_input;
 
 mod ops;
+mod structs;
 mod utils;
 
 use ops::*;
+use structs::DecimalCharacteristics;
+use utils::string_to_ident;
 
 #[proc_macro_attribute]
 pub fn decimal(
@@ -36,6 +37,13 @@ pub fn decimal(
 
     let struct_name = decimal_struct.ident;
     let denominator = 10u128.pow(parsed_scale as u32);
+
+    let characteristics = DecimalCharacteristics {
+        struct_name: struct_name.clone(),
+        first_field: field_name.clone(),
+        underlying_type: underlying_type.clone(),
+        scale: parsed_scale,
+    };
 
     let struct_implementation = quote!(
 
@@ -83,7 +91,7 @@ pub fn decimal(
         #struct_implementation
     }));
 
-    result.extend(generate_ops(struct_name, underlying_type));
+    result.extend(generate_ops(characteristics));
 
     result
 }
