@@ -8,6 +8,7 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
         underlying_type,
         scale: parsed_scale,
         field_name,
+        ..
     } = characteristics;
 
     let denominator = 10u128.pow(parsed_scale as u32);

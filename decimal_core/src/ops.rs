@@ -1,5 +1,4 @@
 use quote::quote;
-use syn::Ident;
 
 use crate::utils::string_to_ident;
 use crate::DecimalCharacteristics;

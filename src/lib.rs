@@ -23,6 +23,11 @@ pub trait Decimal {
     fn one<T: TryFrom<u128>>() -> T;
 }
 
+pub trait BigOps<T> {
+    fn big_mul(self, rhs: T) -> Self;
+    fn big_div(self, rhs: T) -> Self;
+}
+
 // fn universal_into<Y, T: TryInto<Y>>(a: T) -> Y {
 //     match a.try_into() {
 //         Ok(v) => v,
@@ -30,11 +35,11 @@ pub trait Decimal {
 //     }
 // }
 
-#[decimal(3)]
+#[decimal(3, u128)]
 #[derive(Default, Debug, PartialEq)]
 struct N(u32);
 
-#[decimal(2)]
+#[decimal(2, u8)]
 #[derive(Default, Debug, PartialEq)]
 struct K {
     v: u32,
