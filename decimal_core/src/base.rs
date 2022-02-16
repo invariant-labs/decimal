@@ -12,6 +12,7 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
     } = characteristics;
 
     let denominator = 10u128.pow(parsed_scale as u32);
+    let almost_denominator = denominator.checked_sub(1).unwrap();
 
     proc_macro::TokenStream::from(quote!(
         impl Decimal for #struct_name {
@@ -44,8 +45,13 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
                     Err(_) => panic!("could get one from a decimal",),
                 }
             }
+
+            fn almost_one<T: TryFrom<u128>>() -> T {
+                match T::try_from(#almost_denominator) {
+                    Ok(v) => v,
+                    Err(_) => panic!("could get one from a decimal",),
+                }
+            }
         }
-
-
     ))
 }

@@ -13,20 +13,7 @@ use std::{
     panic,
 };
 
-pub trait Decimal {
-    type U: Debug + Default;
-
-    fn scale(&self) -> u8;
-    fn get(&self) -> Self::U;
-    fn new(value: Self::U) -> Self;
-    fn here<Y: TryFrom<Self::U>>(&self) -> Y;
-    fn one<T: TryFrom<u128>>() -> T;
-}
-
-pub trait BigOps<T> {
-    fn big_mul(self, rhs: T) -> Self;
-    fn big_div(self, rhs: T) -> Self;
-}
+use traits::*;
 
 // fn universal_into<Y, T: TryInto<Y>>(a: T) -> Y {
 //     match a.try_into() {
@@ -39,7 +26,7 @@ pub trait BigOps<T> {
 #[derive(Default, Debug, PartialEq)]
 struct N(u32);
 
-#[decimal(2, u8)]
+#[decimal(2, u128)]
 #[derive(Default, Debug, PartialEq)]
 struct K {
     v: u32,

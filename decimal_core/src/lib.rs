@@ -2,6 +2,7 @@ use quote::{quote, ToTokens};
 use syn::parse_macro_input;
 
 mod base;
+mod big_ops;
 mod ops;
 mod structs;
 mod utils;
@@ -15,20 +16,17 @@ pub fn decimal(
     attr: proc_macro::TokenStream,
     item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let param_string = attr.to_string().clone();
-    let params = param_string.split(",").collect::<Vec<_>>();
+    let args_str = attr.to_string();
+    let args: Vec<&str> = args_str.split(',').collect();
 
-    // println!("params: {:?}", params[0].parse::<u8>().unwrap());
-
-    let parsed_scale = match params[0].parse::<u8>() {
+    let parsed_scale = match args[0].parse::<u8>() {
         Ok(scale) => scale,
         Err(_) => 0,
     };
-    println!("here");
 
-    let big_type = match params.len() {
+    let big_type = match args.len() {
         1 => string_to_ident("", "U256"),
-        2 => string_to_ident("", params[1].trim()),
+        2 => string_to_ident("", args[1].trim()),
         _ => panic!("decimal: invalid number of parameters"),
     };
 
@@ -62,6 +60,7 @@ pub fn decimal(
 
     result.extend(base::generate_base(characteristics.clone()));
     result.extend(ops::generate_ops(characteristics.clone()));
+    result.extend(big_ops::generate_big_ops(characteristics.clone()));
 
     result
 }
