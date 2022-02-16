@@ -3,6 +3,7 @@ use syn::parse_macro_input;
 
 mod base;
 mod big_ops;
+mod factories;
 mod ops;
 mod structs;
 mod utils;
@@ -61,6 +62,7 @@ pub fn decimal(
     result.extend(base::generate_base(characteristics.clone()));
     result.extend(ops::generate_ops(characteristics.clone()));
     result.extend(big_ops::generate_big_ops(characteristics.clone()));
+    result.extend(factories::generate_factories(characteristics.clone()));
 
     result
 }

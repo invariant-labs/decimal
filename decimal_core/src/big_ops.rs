@@ -12,7 +12,7 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
 
     let name_str = &struct_name.to_string();
 
-    let module_name = string_to_ident("tests_big_ops", &name_str);
+    let module_name = string_to_ident("tests_big_ops_", &name_str);
 
     proc_macro::TokenStream::from(quote!(
         impl<T: Decimal> BigOps<T> for #struct_name
@@ -95,7 +95,7 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
 
             fn test_mul_up () {
                 let a = #struct_name::new(2);
-                let b = #struct_name::new(#struct_name::one() );
+                let b = #struct_name::new(#struct_name::one());
                 assert_eq!(a.big_mul_up(b), #struct_name::new(2));
             }
 
@@ -103,14 +103,14 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
             fn test_div () {
                 let a = #struct_name::new(2);
                 let b = #struct_name::new(#struct_name::one());
-                assert_eq!(a.big_div(b), #struct_name::new(1));
+                assert_eq!(a.big_div(b), #struct_name::new(2));
             }
 
             #[test]
-            fn test_div () {
+            fn test_div_up () {
                 let a = #struct_name::new(2);
                 let b = #struct_name::new(#struct_name::one());
-                assert_eq!(a.big_div_up(b), #struct_name::new(1));
+                assert_eq!(a.big_div_up(b), #struct_name::new(2));
             }
         }
     ))

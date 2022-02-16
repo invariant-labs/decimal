@@ -17,3 +17,8 @@ pub trait BigOps<T> {
     fn big_div(self, rhs: T) -> Self;
     fn big_div_up(self, rhs: T) -> Self;
 }
+
+pub trait Factories<T> {
+    fn from_integer(integer: T) -> Self;
+    fn from_decimal(integer: T, scale: u8) -> Self;
+}
