@@ -43,7 +43,7 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
                         .checked_mul(
                             rhs.get()
                                 .try_into()
-                                .unwrap_or_else(|_| panic!("could not parse")),
+                                .unwrap_or_else(|_| panic!("value of rhs can't fit into underlying type in `Mul`")),
                         )
                         .unwrap()
                         .checked_div(T::one())

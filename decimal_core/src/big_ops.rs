@@ -71,7 +71,7 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                         .checked_add(
                             rhs.get()
                                 .try_into().unwrap_or_else(|_| panic!("rhs value could not be converted to big type in `big_div_up`"))
-                                .checked_sub(1).unwrap()
+                                .checked_sub(#big_type::from(1u128)).unwrap()
                         ).unwrap()
                         .checked_div(
                             rhs.get()

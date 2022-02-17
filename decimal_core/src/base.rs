@@ -23,7 +23,7 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
             }
 
             fn get(&self) -> #underlying_type {
-                self.#field_name.into()
+                self.#field_name
             }
 
             fn new(value: #underlying_type) -> #struct_name {
@@ -42,14 +42,14 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
             fn one<T: TryFrom<u128>>() -> T {
                 match T::try_from(#denominator) {
                     Ok(v) => v,
-                    Err(_) => panic!("could get one from a decimal",),
+                    Err(_) => panic!("denominator wouldn't fit into this type",),
                 }
             }
 
             fn almost_one<T: TryFrom<u128>>() -> T {
                 match T::try_from(#almost_denominator) {
                     Ok(v) => v,
-                    Err(_) => panic!("could get one from a decimal",),
+                    Err(_) => panic!("denominator wouldn't fit into this type",),
                 }
             }
         }
