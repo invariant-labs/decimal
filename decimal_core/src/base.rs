@@ -18,10 +18,6 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
         impl Decimal for #struct_name {
             type U = #underlying_type;
 
-            fn scale(&self) -> u8 {
-                #parsed_scale
-            }
-
             fn get(&self) -> #underlying_type {
                 self.#field_name
             }
@@ -35,21 +31,25 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
             fn here<T: TryFrom<#underlying_type>>(&self) -> T {
                 match T::try_from(self.#field_name) {
                     Ok(v) => v,
-                    Err(_) => panic!("could not parse {} to {}", "T", "u8"),
+                    Err(_) => std::panic!("could not parse {} to {}", "T", "u8"),
                 }
+            }
+
+            fn scale() -> u8 {
+                #parsed_scale
             }
 
             fn one<T: TryFrom<u128>>() -> T {
                 match T::try_from(#denominator) {
                     Ok(v) => v,
-                    Err(_) => panic!("denominator wouldn't fit into this type",),
+                    Err(_) => std::panic!("denominator wouldn't fit into this type",),
                 }
             }
 
             fn almost_one<T: TryFrom<u128>>() -> T {
                 match T::try_from(#almost_denominator) {
                     Ok(v) => v,
-                    Err(_) => panic!("denominator wouldn't fit into this type",),
+                    Err(_) => std::panic!("denominator wouldn't fit into this type",),
                 }
             }
         }

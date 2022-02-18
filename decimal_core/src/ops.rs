@@ -15,7 +15,7 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
     let module_name = string_to_ident("tests_", &name_str);
 
     proc_macro::TokenStream::from(quote!(
-        impl Add for #struct_name {
+        impl std::ops::Add for #struct_name {
             type Output = #struct_name;
 
             fn add(self, rhs: Self) -> #struct_name {
@@ -23,7 +23,7 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
             }
         }
 
-        impl Sub for #struct_name {
+        impl std::ops::Sub for #struct_name {
             type Output = #struct_name;
 
             fn sub(self, rhs: Self) -> #struct_name {
@@ -31,7 +31,7 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
             }
         }
 
-        impl<T: Decimal> Mul<T> for #struct_name
+        impl<T: Decimal> std::ops::Mul<T> for #struct_name
         where
             T::U: TryInto<#underlying_type>,
         {
@@ -43,7 +43,7 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
                         .checked_mul(
                             rhs.get()
                                 .try_into()
-                                .unwrap_or_else(|_| panic!("value of rhs can't fit into underlying type in `Mul`")),
+                                .unwrap_or_else(|_| std::panic!("value of rhs can't fit into underlying type in `Mul`")),
                         )
                         .unwrap()
                         .checked_div(T::one())
@@ -52,7 +52,7 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
             }
         }
 
-        impl<T: Decimal> Div<T> for #struct_name
+        impl<T: Decimal> std::ops::Div<T> for #struct_name
         where
             T::U: TryInto<#underlying_type>,
         {
@@ -66,7 +66,7 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
                         .checked_div(
                             rhs.get()
                                 .try_into()
-                                .unwrap_or_else(|_| panic!("could not parse")),
+                                .unwrap_or_else(|_| std::panic!("could not parse")),
                         )
                         .unwrap(),
                 )

@@ -24,7 +24,7 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                     #big_type::try_from(self.get()).unwrap()
                         .checked_mul(
                             rhs.get()
-                                .try_into().unwrap_or_else(|_| panic!("rhs value could not be converted to big type in `big_mul`")),
+                                .try_into().unwrap_or_else(|_| std::panic!("rhs value could not be converted to big type in `big_mul`")),
                         ).unwrap()
                         .checked_div(
                             T::one()
@@ -38,7 +38,7 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                     #big_type::try_from(self.get()).unwrap()
                         .checked_mul(
                             rhs.get()
-                                .try_into().unwrap_or_else(|_| panic!("rhs value could not be converted to big type in `big_mul_up`")),
+                                .try_into().unwrap_or_else(|_| std::panic!("rhs value could not be converted to big type in `big_mul_up`")),
                         ).unwrap()
                         .checked_add(T::almost_one()).unwrap()
                         .checked_div(
@@ -56,7 +56,7 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                         ).unwrap()
                         .checked_div(
                             rhs.get()
-                                .try_into().unwrap_or_else(|_| panic!("rhs value could not be converted to big type in `big_div`")),
+                                .try_into().unwrap_or_else(|_| std::panic!("rhs value could not be converted to big type in `big_div`")),
                         ).unwrap()
                         .try_into().unwrap()
                 )
@@ -70,12 +70,12 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                         ).unwrap()
                         .checked_add(
                             rhs.get()
-                                .try_into().unwrap_or_else(|_| panic!("rhs value could not be converted to big type in `big_div_up`"))
+                                .try_into().unwrap_or_else(|_| std::panic!("rhs value could not be converted to big type in `big_div_up`"))
                                 .checked_sub(#big_type::from(1u128)).unwrap()
                         ).unwrap()
                         .checked_div(
                             rhs.get()
-                                .try_into().unwrap_or_else(|_| panic!("rhs value could not be converted to big type in `big_div_up`")),
+                                .try_into().unwrap_or_else(|_| std::panic!("rhs value could not be converted to big type in `big_div_up`")),
                         ).unwrap()
                         .try_into().unwrap()
                 )
@@ -87,27 +87,27 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
             use super::*;
 
             #[test]
-            fn test_mul () {
+            fn test_big_mul () {
                 let a = #struct_name::new(2);
                 let b = #struct_name::new(#struct_name::one());
                 assert_eq!(a.big_mul(b), #struct_name::new(2));
             }
 
-            fn test_mul_up () {
+            fn test_big_mul_up () {
                 let a = #struct_name::new(2);
                 let b = #struct_name::new(#struct_name::one());
                 assert_eq!(a.big_mul_up(b), #struct_name::new(2));
             }
 
             #[test]
-            fn test_div () {
+            fn test_big_div () {
                 let a = #struct_name::new(2);
                 let b = #struct_name::new(#struct_name::one());
                 assert_eq!(a.big_div(b), #struct_name::new(2));
             }
 
             #[test]
-            fn test_div_up () {
+            fn test_big_div_up () {
                 let a = #struct_name::new(2);
                 let b = #struct_name::new(#struct_name::one());
                 assert_eq!(a.big_div_up(b), #struct_name::new(2));

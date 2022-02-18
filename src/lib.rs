@@ -7,20 +7,7 @@ pub use crate::uint::U256;
 
 use decimal_core::decimal;
 
-use std::{
-    fmt::Debug,
-    ops::{Add, Div, Mul, Sub},
-    panic,
-};
-
 use traits::*;
-
-// fn universal_into<Y, T: TryInto<Y>>(a: T) -> Y {
-//     match a.try_into() {
-//         Ok(v) => v,
-//         Err(_) => panic!("could not parse {} to {}", "T", "u8"),
-//     }
-// }
 
 #[cfg(test)]
 #[decimal(3, u128)]
@@ -39,6 +26,42 @@ struct N(u8);
 #[cfg(test)]
 pub mod tests {
     use super::*;
+
+    #[test]
+    fn test_from_decimal() {
+        let r = R(42);
+        let q = Q { v: 144 };
+        let n = N(3);
+
+        assert_eq!(R::from_decimal(r), r);
+        assert_eq!(R::from_decimal(q), R(14400));
+        assert_eq!(R::from_decimal(n), R(3000));
+
+        assert_eq!(Q::from_decimal(r), Q { v: 0 });
+        assert_eq!(Q::from_decimal(q), q);
+        assert_eq!(Q::from_decimal(n), Q { v: 30 });
+
+        assert_eq!(N::from_decimal(n), n);
+        assert_eq!(N::from_decimal(q), N(14));
+    }
+
+    #[test]
+    fn test_from_decimal_up() {
+        let r = R(42);
+        let q = Q { v: 144 };
+        let n = N(3);
+
+        assert_eq!(R::from_decimal_up(r), r);
+        assert_eq!(R::from_decimal_up(q), R(14400));
+        assert_eq!(R::from_decimal_up(n), R(3000));
+
+        assert_eq!(Q::from_decimal_up(r), Q { v: 1 });
+        assert_eq!(Q::from_decimal_up(q), q);
+        assert_eq!(Q::from_decimal_up(n), Q { v: 30 });
+
+        assert_eq!(N::from_decimal_up(n), n);
+        assert_eq!(N::from_decimal_up(q), N(15));
+    }
 
     #[test]
     fn test_ops() {

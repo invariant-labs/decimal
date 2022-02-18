@@ -28,7 +28,7 @@ pub fn decimal(
     let big_type = match args.len() {
         1 => string_to_ident("", "U256"),
         2 => string_to_ident("", args[1].trim()),
-        _ => panic!("decimal: invalid number of parameters"),
+        _ => std::panic!("decimal: invalid number of parameters"),
     };
 
     assert!(parsed_scale <= 38, "scale too big");
@@ -58,7 +58,7 @@ pub fn decimal(
     };
 
     let mut result = proc_macro::TokenStream::from(quote! {
-        #[derive(Default, Debug, Clone, Copy, PartialEq, )]
+        #[derive(Default, std::fmt::Debug, Clone, Copy, PartialEq, )]
     });
 
     result.extend(item.clone());
