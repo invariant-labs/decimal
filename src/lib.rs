@@ -24,19 +24,16 @@ use traits::*;
 
 #[cfg(test)]
 #[decimal(3, u128)]
-#[derive(Default, Debug, PartialEq, Clone, Copy)]
 struct R(u32);
 
 #[cfg(test)]
 #[decimal(1)]
-#[derive(Default, Debug, PartialEq, Clone, Copy)]
 struct Q {
     v: u16,
 }
 
 #[cfg(test)]
 #[decimal(0)]
-#[derive(Default, Debug, PartialEq, Clone, Copy)]
 struct N(u8);
 
 #[cfg(test)]
@@ -67,7 +64,7 @@ pub mod tests {
     }
 
     #[test]
-    fn test_big_ops() {
+    fn test_big_mul() {
         // precision
         {
             let a = Q::from_integer(1);
@@ -99,12 +96,56 @@ pub mod tests {
         }
         // random
         {
-            let a = R::new(879132 * 9383);
+            let a = R::new(879132);
             let b = Q::new(9383);
             let d = a.big_mul(b);
             let u = a.big_mul_up(b);
 
             let expected = R(824889555);
+            assert_eq!(d, expected);
+            assert_eq!(u, expected + R(1));
+        }
+    }
+
+    #[test]
+    fn test_big_div() {
+        // precision
+        {
+            let a = Q::from_integer(1);
+            let b = R::from_integer(1);
+            let d = a.big_div(b);
+            let u = a.big_div_up(b);
+            assert_eq!(d, Q::from_integer(1));
+            assert_eq!(u, Q::from_integer(1));
+        }
+        // simple
+        {
+            let a = Q::from_integer(6);
+            let b = R::from_integer(3);
+            let d = a.big_div(b);
+            let u = a.big_div_up(b);
+            assert_eq!(d, Q::from_integer(2));
+            assert_eq!(u, Q::from_integer(2));
+        }
+        // big
+        {
+            let a = Q::new(2u16.pow(15));
+            let b = R::from_integer(1);
+            let d = a.big_div(b);
+            let u = a.big_div_up(b);
+
+            let expected = Q::new(2u16.pow(15));
+            assert_eq!(d, expected);
+            assert_eq!(u, expected);
+        }
+        // random
+        {
+            let a = R::new(824889555);
+            let b = Q::new(9383);
+            let d = a.big_div(b);
+            let u = a.big_div_up(b);
+
+            let expected = R(879131);
             assert_eq!(d, expected);
             assert_eq!(u, expected + R(1));
         }
