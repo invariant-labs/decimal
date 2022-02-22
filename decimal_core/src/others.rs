@@ -19,11 +19,7 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
         where
             T::U: TryInto<#underlying_type>,
         {
-            type Output = #struct_name;
-
-            fn mul_up(self, rhs: Self) -> #struct_name {
-                
-
+            fn mul_up(self, rhs: T) -> #struct_name {
                 #struct_name::new(
                     self.get().checked_mul(
                         rhs.get()
@@ -31,9 +27,7 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
                             .unwrap_or_else(|_| std::panic!("value of rhs can't fit into underlying type in `MulUp`")),
                     ).unwrap()
                     .checked_div(T::almost_one()).unwrap()
-                    .checked_div(
-                        T::one()
-                    ).unwrap()
+                    .checked_div(T::one()).unwrap()
                     .try_into().unwrap()
                 )
             }
