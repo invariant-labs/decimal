@@ -11,16 +11,19 @@ use traits::*;
 
 #[cfg(test)]
 #[decimal(3, u128)]
+#[derive(Default, std::fmt::Debug, Clone, Copy, PartialEq)]
 struct R(u32);
 
 #[cfg(test)]
 #[decimal(1)]
+#[derive(Default, std::fmt::Debug, Clone, Copy, PartialEq)]
 struct Q {
     v: u16,
 }
 
 #[cfg(test)]
 #[decimal(0)]
+#[derive(Default, std::fmt::Debug, Clone, Copy, PartialEq)]
 struct N(u8);
 
 #[cfg(test)]

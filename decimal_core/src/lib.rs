@@ -58,7 +58,7 @@ pub fn decimal(
     };
 
     let mut result = proc_macro::TokenStream::from(quote! {
-        #[derive(Default, std::fmt::Debug, Clone, Copy, PartialEq, )]
+        // #[derive(Default, std::fmt::Debug, Clone, Copy, PartialEq, )]
     });
 
     result.extend(item.clone());
