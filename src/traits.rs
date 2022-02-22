@@ -20,7 +20,7 @@ pub trait BigOps<T> {
 
 pub trait Others<T> {
     fn mul_up(self, rhs: T) -> Self;
-    // fn div_up(self, rhs: T) -> Self;
+    fn div_up(self, rhs: T) -> Self;
     // fn pow(self, rhs: T) -> Self;
 }
 

@@ -31,6 +31,22 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
                     .try_into().unwrap()
                 )
             }
+
+            fn div_up(self, rhs: T) -> #struct_name {
+                #struct_name::new(
+                    self.get().checked_mul(T::one()).unwrap()
+                    .checked_add(
+                        rhs.get()
+                            .try_into().unwrap_or_else(|_| std::panic!("value of rhs can't fit into underlying type in `DivUp`"))
+                            .checked_sub(#underlying_type::from(1u128)).unwrap()
+                    ).unwrap()
+                    .checked_div(
+                        rhs.get()
+                            .try_into().unwrap_or_else(|_| std::panic!("value of rhs can't fit into underlying type in `DivUp`")),
+                    ).unwrap()
+                    .try_into().unwrap()
+                )
+            }
         }
 
         #[cfg(test)]
@@ -43,6 +59,13 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
                 let b = #struct_name::new(#struct_name::one());
                 assert_eq!(a.mul_up(b), #struct_name::new(2));
             }
+
+            // #[test]
+            // fn test_div_up() {
+            //     let a = #struct_name::new(2);
+            //     let b = #struct_name::new(#struct_name::one());
+            //     assert_eq!(a.div_up(b), #struct_name::new(2));
+            // }
         }
     ))
 }
