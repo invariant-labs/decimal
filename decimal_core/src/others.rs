@@ -12,7 +12,7 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
 
     let name_str = &struct_name.to_string();
 
-    let module_name = string_to_ident("tests_", &name_str);
+    let module_name = string_to_ident("tests_others", &name_str);
 
     proc_macro::TokenStream::from(quote!(
         impl<T: Decimal> Others<T> for #struct_name
@@ -26,7 +26,7 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
                             .try_into()
                             .unwrap_or_else(|_| std::panic!("value of rhs can't fit into underlying type in `MulUp`")),
                     ).unwrap()
-                    .checked_div(T::almost_one()).unwrap()
+                    .checked_add(T::almost_one()).unwrap()
                     .checked_div(T::one()).unwrap()
                     .try_into().unwrap()
                 )
