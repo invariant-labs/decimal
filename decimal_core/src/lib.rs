@@ -68,5 +68,13 @@ pub fn decimal(
     result.extend(big_ops::generate_big_ops(characteristics.clone()));
     result.extend(factories::generate_factories(characteristics.clone()));
 
+    result.extend(proc_macro::TokenStream::from(quote! {
+        impl #struct_name {
+            pub fn is_zero(self) -> bool {
+                self.#field_name == 0
+            }
+        }
+    }));
+
     result
 }

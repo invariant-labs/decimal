@@ -73,36 +73,69 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
             }
         }
 
+        impl std::ops::AddAssign for #struct_name {
+            fn add_assign(&mut self, rhs: Self)  {
+                *self = *self + rhs
+            }
+        }
+
+        impl std::ops::SubAssign for #struct_name {
+            fn sub_assign(&mut self, rhs: Self)  {
+                *self = *self - rhs
+            }
+        }
+
+        impl std::ops::MulAssign for #struct_name {
+            fn mul_assign(&mut self, rhs: Self)  {
+                *self = *self * rhs
+            }
+        }
+
+        impl std::ops::DivAssign for #struct_name {
+            fn div_assign(&mut self, rhs: Self)  {
+                *self = *self / rhs
+            }
+        }
+
+
         #[cfg(test)]
         pub mod #module_name {
             use super::*;
 
             #[test]
             fn test_add () {
-                let a = #struct_name::new(1);
+                let mut a = #struct_name::new(1);
                 let b = #struct_name::new(1);
                 assert_eq!(a + b, #struct_name::new(2));
+                a += b;
+                assert_eq!(a, #struct_name::new(2));
             }
 
             #[test]
             fn test_sub () {
-                let a = #struct_name::new(1);
+                let mut a = #struct_name::new(1);
                 let b = #struct_name::new(1);
                 assert_eq!(a - b, #struct_name::new(0));
+                a -= b;
+                assert_eq!(a, #struct_name::new(0));
             }
 
             #[test]
             fn test_mul () {
-                let a = #struct_name::new(2);
+                let mut a = #struct_name::new(2);
                 let b = #struct_name::new(#struct_name::one());
                 assert_eq!(a * b, #struct_name::new(2));
+                a *= b;
+                assert_eq!(a, #struct_name::new(2));
             }
 
             #[test]
             fn test_div () {
-                let a = #struct_name::new(2);
+                let mut a = #struct_name::new(2);
                 let b = #struct_name::new(#struct_name::one());
                 assert_eq!(a / b, #struct_name::new(2));
+                a /= b;
+                assert_eq!(a, #struct_name::new(2));
             }
         }
     ))
