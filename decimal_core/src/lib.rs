@@ -7,6 +7,7 @@ mod factories;
 mod ops;
 mod structs;
 mod utils;
+mod others;
 
 use structs::DecimalCharacteristics;
 
@@ -66,6 +67,7 @@ pub fn decimal(
     result.extend(base::generate_base(characteristics.clone()));
     result.extend(ops::generate_ops(characteristics.clone()));
     result.extend(big_ops::generate_big_ops(characteristics.clone()));
+    result.extend(others::generate_others(characteristics.clone()));
     result.extend(factories::generate_factories(characteristics.clone()));
 
     result.extend(proc_macro::TokenStream::from(quote! {

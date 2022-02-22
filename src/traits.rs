@@ -18,6 +18,12 @@ pub trait BigOps<T> {
     fn big_div_up(self, rhs: T) -> Self;
 }
 
+pub trait Others<T> {
+    fn mul_up(self, rhs: T) -> Self;
+    // fn div_up(self, rhs: T) -> Self;
+    // fn pow(self, rhs: T) -> Self;
+}
+
 pub trait Factories<T> {
     fn from_integer(integer: T) -> Self;
     fn from_scale(integer: T, scale: u8) -> Self;
