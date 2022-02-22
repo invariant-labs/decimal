@@ -1,13 +1,10 @@
-pub mod decimal;
-pub mod operations;
-pub mod traits;
-pub mod uint;
+mod traits;
+mod uint;
 
 pub use crate::uint::U256;
 
-use decimal_core::decimal;
-
-use traits::*;
+pub use decimal_core::decimal;
+pub use traits::*;
 
 #[cfg(test)]
 #[decimal(3, u128)]

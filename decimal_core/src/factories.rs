@@ -11,7 +11,7 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
         ..
     } = characteristics;
 
-    let module_name = string_to_ident("tests_factories", &struct_name.to_string());
+    let module_name = string_to_ident("tests_factories_", &struct_name.to_string());
 
     proc_macro::TokenStream::from(quote!(
 
