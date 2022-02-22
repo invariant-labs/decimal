@@ -93,6 +93,7 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                 assert_eq!(a.big_mul(b), #struct_name::new(2));
             }
 
+            #[test]
             fn test_big_mul_up () {
                 let a = #struct_name::new(2);
                 let b = #struct_name::new(#struct_name::one());
