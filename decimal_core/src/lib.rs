@@ -5,9 +5,9 @@ mod base;
 mod big_ops;
 mod factories;
 mod ops;
+mod others;
 mod structs;
 mod utils;
-mod others;
 
 use structs::DecimalCharacteristics;
 
@@ -73,7 +73,7 @@ pub fn decimal(
     result.extend(proc_macro::TokenStream::from(quote! {
         impl #struct_name {
             pub fn is_zero(self) -> bool {
-                self.#field_name == 0
+                self.#field_name == #underlying_type::try_from(0).unwrap()
             }
         }
     }));

@@ -12,7 +12,7 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
 
     let name_str = &struct_name.to_string();
 
-    let module_name = string_to_ident("tests_others", &name_str);
+    let module_name = string_to_ident("tests_others_", &name_str);
 
     proc_macro::TokenStream::from(quote!(
         impl<T: Decimal> Others<T> for #struct_name
