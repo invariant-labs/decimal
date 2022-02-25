@@ -16,52 +16,55 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
     proc_macro::TokenStream::from(quote!(
 
         impl<T> Factories<T> for #struct_name
-            where T: TryInto<#underlying_type>
+            where
+            T: TryInto<u128>,
+            T: TryFrom<u128>,
+            T: TryInto<#underlying_type>,
+            T: From<u8>,
+            T: num_traits::ops::checked::CheckedDiv,
+            T: num_traits::ops::checked::CheckedAdd,
+            T: num_traits::ops::checked::CheckedSub
         {
             fn from_integer(integer: T) -> Self {
-                Self::new(
-                    integer.try_into().unwrap_or_else(|_| std::panic!("integer too to create decimal"))
-                    .checked_mul(
-                        Self::one()
-                    ).unwrap()
-                )
+                Self::new({
+                    let base: #underlying_type = integer.try_into().unwrap_or_else(|_| std::panic!("integer too to create decimal"));
+                    base.checked_mul(Self::one()).unwrap()
+                })
             }
 
             fn from_scale(val: T, scale: u8) -> Self {
                 Self::new(
                     if #scale > scale {
-                        val.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))
-                        .checked_mul(
-                            (10 as #underlying_type).checked_pow((#scale - scale) as u32).unwrap()
-                        )
+                        let base: #underlying_type = val.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"));
+                        let multiplier: u128 = 10u128.checked_pow((#scale - scale) as u32).unwrap();
+                        base.checked_mul(multiplier.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))).unwrap()
                     } else {
-                        val.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))
-                            .checked_div(
-                                (10 as #underlying_type).checked_pow((scale - #scale) as u32).unwrap()
-                            )
-                    }.unwrap()
+                        let denominator: u128 = 10u128.checked_pow((scale - #scale) as u32).unwrap();
+                         val.checked_div(
+                            &denominator.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))
+                        ).unwrap().try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))
+                    }
                 )
             }
 
             fn from_scale_up(val: T, scale: u8) -> Self {
                 Self::new(
                     if #scale > scale {
-                        val.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))
-                        .checked_mul(
-                            (10 as #underlying_type).checked_pow((#scale - scale) as u32).unwrap()
-                        )
+                        let base: #underlying_type = val.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"));
+                        let multiplier: u128 = 10u128.checked_pow((#scale - scale) as u32).unwrap();
+                        base.checked_mul(multiplier.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))).unwrap()
                     } else {
-                        let denominator = (10 as #underlying_type).checked_pow((scale - #scale) as u32).unwrap();
-                        val.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))
-                            .checked_add(
-                                denominator.checked_sub(
-                                    #underlying_type::try_from(1).unwrap()
-                                ).unwrap()
-                            ).unwrap()
-                            .checked_div(
-                                denominator
-                            )
-                    }.unwrap()
+                        let multiplier: u128 = 10u128.checked_pow((scale - #scale) as u32).unwrap();
+                        let denominator: T = multiplier.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"));
+                        val
+                        .checked_add(
+                            &denominator.checked_sub(&T::from(1u8)).unwrap()
+                        ).unwrap()
+                        .checked_div(
+                            &denominator
+                        ).unwrap()
+                        .try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))
+                    }
                 )
             }
         }

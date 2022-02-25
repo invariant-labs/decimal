@@ -9,3 +9,4 @@ edition = "2021"
 decimal_core = { path = "decimal_core" }
 integer-sqrt = "0.1.5"
 uint = "0.9"
+num-traits = "0.2.14"
