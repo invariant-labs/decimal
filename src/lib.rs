@@ -4,6 +4,7 @@ mod uint;
 pub use crate::uint::U256;
 
 pub use decimal_core::decimal;
+pub use num_traits;
 pub use traits::*;
 
 #[cfg(test)]
