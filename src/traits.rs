@@ -40,5 +40,6 @@ pub trait ToValue<T, B> {
 }
 
 pub trait ByNumber<B> {
-    fn big_div_up_by_number(self, number: B) -> Self;
+    fn big_div_by_number(self, number: B) -> Self;
+    fn big_div_by_number_up(self, number: B) -> Self;
 }
