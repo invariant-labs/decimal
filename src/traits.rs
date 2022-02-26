@@ -34,6 +34,11 @@ pub trait BetweenDecimals<T> {
     fn from_decimal_up(other: T) -> Self;
 }
 
-pub trait ByNumber<T> {
-    fn big_div_up_by_number(self, number: T) -> Self;
+pub trait ToValue<T, B> {
+    fn big_mul_to_value(self, value: T) -> B;
+    fn big_mul_to_value_up(self, value: T) -> B;
+}
+
+pub trait ByNumber<B> {
+    fn big_div_up_by_number(self, number: B) -> Self;
 }
