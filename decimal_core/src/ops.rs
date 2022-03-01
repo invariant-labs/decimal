@@ -16,9 +16,9 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
 
     proc_macro::TokenStream::from(quote!(
         impl std::ops::Add for #struct_name {
-            type Output = #struct_name;
+            type Output = Self;
 
-            fn add(self, rhs: Self) -> #struct_name {
+            fn add(self, rhs: Self) -> Self {
                 Self::new(self.get().checked_add(rhs.get()).unwrap())
             }
         }
@@ -37,8 +37,8 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
         {
             type Output = #struct_name;
 
-            fn mul(self, rhs: T) -> #struct_name {
-                #struct_name::new(
+            fn mul(self, rhs: T) -> Self {
+                Self::new(
                     self.get()
                         .checked_mul(
                             rhs.get()
@@ -56,10 +56,10 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
         where
             T::U: TryInto<#underlying_type>,
         {
-            type Output = #struct_name;
+            type Output = Self;
 
-            fn div(self, rhs: T) -> #struct_name {
-                #struct_name::new(
+            fn div(self, rhs: T) -> Self {
+                Self::new(
                     self.get()
                         .checked_mul(T::one())
                         .unwrap()

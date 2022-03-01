@@ -19,8 +19,8 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
         where
             T::U: TryInto<#big_type>,
         {
-            fn big_mul(self, rhs: T) -> #struct_name {
-                #struct_name::new(
+            fn big_mul(self, rhs: T) -> Self {
+                Self::new(
                     #big_type::try_from(self.get()).unwrap()
                         .checked_mul(
                             rhs.get()
@@ -33,8 +33,8 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                 )
             }
 
-            fn big_mul_up(self, rhs: T) -> #struct_name {
-                #struct_name::new(
+            fn big_mul_up(self, rhs: T) -> Self {
+                Self::new(
                     #big_type::try_from(self.get()).unwrap()
                         .checked_mul(
                             rhs.get()
@@ -48,8 +48,8 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                 )
             }
 
-            fn big_div(self, rhs: T) -> #struct_name {
-                #struct_name::new(
+            fn big_div(self, rhs: T) -> Self {
+                Self::new(
                     #big_type::try_from(self.get()).unwrap()
                         .checked_mul(
                             T::one()
@@ -62,8 +62,8 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                 )
             }
 
-            fn big_div_up(self, rhs: T) -> #struct_name {
-                #struct_name::new(
+            fn big_div_up(self, rhs: T) -> Self {
+                Self::new(
                     #big_type::try_from(self.get()).unwrap()
                         .checked_mul(
                             T::one()
