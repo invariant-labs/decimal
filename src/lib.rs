@@ -174,4 +174,24 @@ pub mod tests {
             assert_eq!(u, expected + R(1));
         }
     }
+
+    #[test]
+    fn tests_mul_to_number() {
+        // basic
+        {
+            let a = Q::from_integer(1u8);
+            let b = Q::from_integer(2u8);
+            assert_eq!(a.big_mul_to_value(b), b.here());
+            assert_eq!(a.big_mul_to_value_up(b), b.here());
+        }
+        // overflowing
+        {
+            let a = Q::from_integer(u16::MAX);
+            let b = Q::from_integer(u16::MAX);
+            // real     4.294967296 × 10^8
+            // expected 4294967296
+            assert_eq!(a.big_mul_to_value(b), U256::from(4294967296u64));
+            assert_eq!(a.big_mul_to_value_up(b), U256::from(4294967297u64));
+        }
+    }
 }
