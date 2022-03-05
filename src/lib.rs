@@ -209,8 +209,6 @@ pub mod tests {
         {
             let a = Q::new(u16::MAX);
             let b = U256::from(u16::MAX as u64 * 10 + 1);
-            // real     4.294836225 × 10^8
-            // expected  429483622
             assert_eq!(a.big_div_by_number(b), Q::new(0));
             assert_eq!(a.big_div_by_number_up(b), Q::new(1));
         }
