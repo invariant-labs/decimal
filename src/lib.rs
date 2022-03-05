@@ -205,7 +205,7 @@ pub mod tests {
             assert_eq!(a.big_div_by_number(big_type), b);
             assert_eq!(a.big_div_by_number_up(big_type), b);
         }
-        // overflowing
+        // huge
         {
             let a = Q::new(u16::MAX);
             let b = U256::from(u16::MAX as u64 * 10 + 1);
@@ -213,6 +213,15 @@ pub mod tests {
             // expected  429483622
             assert_eq!(a.big_div_by_number(b), Q::new(0));
             assert_eq!(a.big_div_by_number_up(b), Q::new(1));
+        }
+        // random
+        {
+            let a = Q::new(63424);
+            let b = U256::from(157209);
+            // real     0.403437462..
+            // expected  4
+            assert_eq!(a.big_div_by_number(b), Q::new(4));
+            assert_eq!(a.big_div_by_number_up(b), Q::new(5));
         }
     }
 }
