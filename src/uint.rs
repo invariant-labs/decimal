@@ -14,6 +14,7 @@ construct_uint! {
     pub struct U192(3);
 }
 
+#[allow(dead_code)]
 pub const fn to_u256(n: u128) -> U256 {
     U256([n as u64, (n >> 64) as u64, 0, 0])
 }
