@@ -222,4 +222,57 @@ pub mod tests {
             assert_eq!(a.big_div_by_number_up(b), Q::new(5));
         }
     }
+
+    #[test]
+    fn test_mul_up() {
+        // mul of little
+        {
+            let a = Q::new(1);
+            let b = Q::new(1);
+            assert_eq!(a.mul_up(b), Q::new(1));
+        }
+        // mul calculable without precision loss
+        {
+            let a = Q::from_integer(1);
+            let b = Q::from_integer(3) / Q::new(10);
+            assert_eq!(a.mul_up(b), b);
+        }
+        {
+            let a = N(1);
+            let b = Q::from_integer(1);
+            assert_eq!(a.mul_up(b), N(1));
+        }
+        {
+            let a = N(3);
+            let b = Q::from_integer(3) / Q::from_integer(10);
+            assert_eq!(a.mul_up(b), N(1));
+        }
+    }
+
+    #[test]
+    fn test_div_up() {
+        // div of zero
+        {
+            let a = Q::new(0);
+            let b = Q::new(1);
+            assert_eq!(a.div_up(b), Q::new(0));
+        }
+        // div check rounding up
+        {
+            let a = Q::new(1);
+            let b = Q::from_integer(2);
+            assert_eq!(a.div_up(b), Q::new(1));
+        }
+        // div big number
+        {
+            let a = R::new(201);
+            let b = R::from_integer(2);
+            assert_eq!(a.div_up(b), R::new(101));
+        }
+        {
+            let a = Q::new(42);
+            let b = R::from_integer(10);
+            assert_eq!(a.div_up(b), Q::new(5));
+        }
+    }
 }
