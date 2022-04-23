@@ -48,7 +48,7 @@ Basic example using types defined above would look like this:
 
     // addition expects being called for left and right values being of the same type
     // multiplication doesn't so you can be used like this:
-    let price = price * (Percentage::from_integer(100) - discount); // the resulting type is always the type of the left value
+    let price = price * (Percentage::from_integer(1) - discount); // the resulting type is always the type of the left value
 
 For more examples continue to the `walkthrough.rs`
 
