@@ -80,7 +80,7 @@ Most of this library uses really basic math, a few things that might not be obvi
 
 An multiplication of two percentages (scale of 2) using just the values would look like this:
 
-$\dfrac{x \div 10^2}{y \div 10^2} = \dfrac{x}{y}$
+-   <img src="https://latex.codecogs.com/gif.latex?\dfrac{x \div 10^2}{y \div 10^2} = \dfrac{x}{y}" />
 
 Using numbers it would look like this:
 
