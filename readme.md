@@ -78,17 +78,19 @@ Most of this library uses really basic math, a few things that might not be obvi
 
 ## Keeping the scale
 
-An multiplication of two percentages (scale of 2) using just the values would look like this:
+An multiplication of two percentages (scale of 2) using just the values would look like this :
 
--   <img src="https://latex.codecogs.com/gif.latex?\dfrac{x \div 10^2}{y \div 10^2} = \dfrac{x}{y}" />
+`(x / 10^2) / (y / 10^2) = x/y`
+
+(God i hate gh for not allowing LaTeX)
 
 Using numbers it would look like this:
 
-$10\% \div 10\% = 10\div10=1\%$
+`10% / 10% = 10 / 10 = 1`
 
-Which is obviously wrong. What we need is multiplying everything by $10^{scale}$ at every division. So it should look like this
+Which is obviously wrong. What we need is multiplying everything by `10^scale` at every division. So it should look like this
 
-$\dfrac{x \div 10^{scale}}{y \div 10^{scale}} \times 10^{scale} = \dfrac{x}{y} \div 10^{scale}$
+`(x / 10^scale) / (y / 10^scale) × 10^scale = x / y × 10^scale`
 
 Which checks out with the example above
 
@@ -100,13 +102,13 @@ The important thing here is that multiplication has to occur before division to 
 
 By default every method rounds down but has a counterpart ending with _up_ rounding the opposite way.
 
-Rounding works by addition of $denominator - 1$ to the numerator, so the _mul_up_ would look like so:
+Rounding works by addition of `denominator - 1` to the numerator, so the _mul_up_ would look like so:
 
-$\dfrac{x \times y + (10^{scale}-1)}{10^{scale}}$
+`(x × y + 10^scale - 1) / 10^scale`
 
-For example for $10\% \times 1\%$
+For example for `10% × 1%`
 
-$\dfrac{10 \times 1 + (10^{2}-1)}{10^{2}} = 109 \div 100 = 1\%$
+`(10 × 1 + (10^2 - 1)) / (10^2) = 109 / 100 = 1%`
 
 # What happens inside (on a code level)
 
@@ -118,8 +120,8 @@ As you do know by this point the whole library is in a form of macro. Inside of 
     -   `fn new(value: Self::U) -> Self;` - the constructor
     -   `fn here<Y: TryFrom<Self::U>>(&self) -> Y;` - same as get, but also 'tries into' the needed value
     -   `fn scale() -> u8;` - the amount of decimal places (given in the macro)
-    -   `fn one<T: TryFrom<u128>>() -> T;` - basically $10^{scale}$, evaluated on the compile time
-    -   `fn almost_one<T: TryFrom<u128>>() -> T;` - same as above but $-1$, also on compile time
+    -   `fn one<T: TryFrom<u128>>() -> T;` - basically `10^scale`, evaluated on the compile time
+    -   `fn almost_one<T: TryFrom<u128>>() -> T;` - same as above but `-1`, also on compile time
 -   `std::ops` - addition, subtraction, multiplication and division together with there assignment counterparts (+=)
 -   `pub trait BigOps<T>` - same as above but with previously mentioned big types used when calculating
 -   `pub trait Others<T>` - trait for future operations if needed, right now with only two methods
@@ -127,8 +129,8 @@ As you do know by this point the whole library is in a form of macro. Inside of 
     -   `fn div_up(self, rhs: T) -> Self;` - division, rounding up
 -   `pub trait Factories<T>` - methods used as ctors (excluding new)
 
-    -   `fn from_integer(integer: T) -> Self;` - creates self with value of: $integer \times 10^{scale}$
-    -   `fn from_scale(integer: T, scale: u8) -> Self;` - creates self with value of: $integer \times 10^{scale - given\_scale}$
+    -   `fn from_integer(integer: T) -> Self;` - creates self with value of: `integer × 10^scale`
+    -   `fn from_scale(integer: T, scale: u8) -> Self;` - creates self with value of: `integer × 10^(scale - given\_scale)`
     -   `fn from_scale_up(integer: T, scale: u8) -> Self;` - same as above but with rounding up
 
 -   `pub trait BetweenDecimals<T>` - used for conversion between different types, possibly with different scales
