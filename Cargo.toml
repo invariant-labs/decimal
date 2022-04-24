@@ -7,7 +7,7 @@ authors = ["Mateusz Zając <matzayonc@gmail.com>"]
 repository = "https://github.com/invariant-labs/decimal"
 
 [dependencies]
-decimal_core = { path = "decimal_core" }
+decimal_core = "0.1.0"
 integer-sqrt = "0.1.5"
 uint = "0.9"
 num-traits = "0.2.14"
