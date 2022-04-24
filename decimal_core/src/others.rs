@@ -72,16 +72,16 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
 
             #[test]
             fn test_mul_up() {
-                let a = #struct_name::new(2);
+                let a = #struct_name::new(1);
                 let b = #struct_name::new(#struct_name::one());
-                assert_eq!(a.mul_up(b), #struct_name::new(2));
+                assert_eq!(a.mul_up(b), a);
             }
 
             #[test]
             fn test_div_up() {
-                let a = #struct_name::new(2);
+                let a = #struct_name::new(1);
                 let b = #struct_name::new(#struct_name::one());
-                assert_eq!(a.div_up(b), #struct_name::new(2));
+                assert_eq!(a.div_up(b), a);
             }
         }
     ))
