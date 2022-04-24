@@ -40,7 +40,7 @@ mod walkthrough {
 
     #[test]
     fn example_price_rounding() {
-        // Rounding is easier to show
+        // Rounding is easier to show on small values
         let original_price = Price(5); // corresponds to 0.0005
 
         // There is one more useful way to declare a decimal: from_scale()

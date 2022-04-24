@@ -63,7 +63,7 @@ The second argument taken has a weird name of a _big type_. It sets the type tha
 
     #[decimal(2)]
     #[derive(Default, Debug, Clone, Copy, PartialEq)]
-    struct Percentage(u8);
+    struct Percentage(u8, u128);
 
     let p = Percentage(110); // 110% or 1.1
 
@@ -127,7 +127,7 @@ As you do know by this point the whole library is in a form of macro. Inside of 
 -   `pub trait Others<T>` - trait for future operations if needed, right now with only two methods
     -   `fn mul_up(self, rhs: T) -> Self;` - multiplication, rounding uo
     -   `fn div_up(self, rhs: T) -> Self;` - division, rounding up
--   `pub trait Factories<T>` - methods used as ctors (excluding new)
+-   `pub trait Factories<T>` - methods used as constructors (excluding new)
 
     -   `fn from_integer(integer: T) -> Self;` - creates self with value of: `integer × 10^scale`
     -   `fn from_scale(integer: T, scale: u8) -> Self;` - creates self with value of: `integer × 10^(scale - given\_scale)`
