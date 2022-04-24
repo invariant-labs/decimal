@@ -11,15 +11,18 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
     } = characteristics;
 
     let name_str = &struct_name.to_string();
+    let underlying_str = &underlying_type.to_string();
 
     let module_name = string_to_ident("tests_", &name_str);
 
     proc_macro::TokenStream::from(quote!(
         impl std::ops::Add for #struct_name {
             type Output = Self;
-
             fn add(self, rhs: Self) -> Self {
-                Self::new(self.get().checked_add(rhs.get()).unwrap())
+                Self::new(self.get()
+                    .checked_add(rhs.get())
+                    .unwrap_or_else(|| panic!("decimal: overflow in method {}::add()", #name_str))
+                )
             }
         }
 
@@ -27,7 +30,10 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
             type Output = #struct_name;
 
             fn sub(self, rhs: Self) -> #struct_name {
-                Self::new(self.get().checked_sub(rhs.get()).unwrap())
+                Self::new(self.get()
+                    .checked_sub(rhs.get())
+                    .unwrap_or_else(|| panic!("decimal: overflow in method {}::sub()", #name_str))
+                )
             }
         }
 
@@ -43,11 +49,11 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
                         .checked_mul(
                             rhs.get()
                                 .try_into()
-                                .unwrap_or_else(|_| std::panic!("value of rhs can't fit into underlying type in `Mul`")),
+                                .unwrap_or_else(|_| std::panic!("decimal: rhs value can't fit into `{}` type in {}::mul()", #underlying_str, #name_str))
                         )
-                        .unwrap()
+                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::mul()", #name_str))
                         .checked_div(T::one())
-                        .unwrap(),
+                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::mul()", #name_str))
                 )
             }
         }
@@ -62,13 +68,13 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
                 Self::new(
                     self.get()
                         .checked_mul(T::one())
-                        .unwrap()
+                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div()", #name_str))
                         .checked_div(
                             rhs.get()
                                 .try_into()
-                                .unwrap_or_else(|_| std::panic!("could not parse")),
+                                .unwrap_or_else(|_| std::panic!("decimal: rhs value can't fit into `{}` type in {}::div()", #underlying_str, #name_str))
                         )
-                        .unwrap(),
+                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div()", #name_str))
                 )
             }
         }

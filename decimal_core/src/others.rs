@@ -12,6 +12,7 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
     } = characteristics;
 
     let name_str = &struct_name.to_string();
+    let underlying_str = &underlying_type.to_string();
 
     let module_name = string_to_ident("tests_others_", &name_str);
 
@@ -22,30 +23,39 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
         {
             fn mul_up(self, rhs: T) -> Self {
                 Self::new(
-                    self.get().checked_mul(
-                        rhs.get()
-                            .try_into()
-                            .unwrap_or_else(|_| std::panic!("value of rhs can't fit into underlying type in `MulUp`")),
-                    ).unwrap()
-                    .checked_add(T::almost_one()).unwrap()
-                    .checked_div(T::one()).unwrap()
-                    .try_into().unwrap()
+                    self.get()
+                        .checked_mul(
+                            rhs.get()
+                                .try_into()
+                                .unwrap_or_else(|_| std::panic!("decimal: rhs value can't fit into `{}` type in {}::mul_up()", #underlying_str, #name_str))
+                        )
+                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::mul_up()", #name_str))
+                        .checked_add(T::almost_one())
+                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::mul_up()", #name_str))
+                        .checked_div(T::one())
+                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::mul_up()", #name_str))
                 )
             }
 
             fn div_up(self, rhs: T) -> Self {
                 Self::new(
-                    self.get().checked_mul(T::one()).unwrap()
-                    .checked_add(
-                        rhs.get()
-                            .try_into().unwrap_or_else(|_| std::panic!("value of rhs can't fit into underlying type in `DivUp`"))
-                            .checked_sub(#underlying_type::try_from(1u128).unwrap()).unwrap()
-                    ).unwrap()
-                    .checked_div(
-                        rhs.get()
-                            .try_into().unwrap_or_else(|_| std::panic!("value of rhs can't fit into underlying type in `DivUp`")),
-                    ).unwrap()
-                    .try_into().unwrap()
+                    self.get()
+                        .checked_mul(T::one())
+                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div_up()", #name_str))
+                        .checked_add(
+                            rhs.get()
+                                .try_into()
+                                .unwrap_or_else(|_| std::panic!("decimal: rhs value can't fit into `{}` type in {}::div_up()", #underlying_str, #name_str))
+                                .checked_sub(#underlying_type::try_from(1u128).unwrap())
+                                .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div_up()", #name_str))
+                            )
+                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div_up()", #name_str))
+                        .checked_div(
+                            rhs.get()
+                                .try_into()
+                                .unwrap_or_else(|_| std::panic!("decimal: rhs value can't fit into `{}` type in {}::div_up()", #underlying_str, #name_str))
+                        )
+                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div_up()", #name_str))
                 )
             }
 
