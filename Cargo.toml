@@ -2,6 +2,7 @@
 name = "checked_decimal_macro"
 version = "0.1.0"
 edition = "2021"
+readme = "README.md"
 authors = ["Mateusz Zając <matzayonc@gmail.com>"]
 repository = "https://github.com/invariant-labs/decimal"
 
