@@ -4,7 +4,7 @@ mod walkthrough;
 
 pub use crate::uint::U256;
 
-pub use decimal_core::decimal;
+pub use checked_decimal_macro_core::decimal;
 pub use num_traits;
 pub use traits::*;
 
