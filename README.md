@@ -62,7 +62,7 @@ The second one is optional and can be a bit harder to grasp
 The second argument taken has a weird name of a _big type_. It sets the type that is to be used when calling the methods with \__big_\_ in the name. Its purpose is to avoid _temporary overflows_ so an overflow that occurs while calculating theS return value despite that value fitting in the given type. Consider the example below
 
     #[decimal(2)]
-    #[derive(Default, std::fmt::Debug, Clone, Copy, PartialEq)]
+    #[derive(Default, Debug, Clone, Copy, PartialEq)]
     struct Percentage(u8);
 
     let p = Percentage(110); // 110% or 1.1
