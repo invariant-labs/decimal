@@ -1,3 +1,5 @@
+[![Decimal macro crate](https://img.shields.io/crates/v/checked_decimal_macro.svg)](https://crates.io/crates/checked_decimal_macro)
+
 # Decimal library
 
 This is a Rust fixed-point numeric library targeting blockchain. It was created purely for practical reasons as a fast and simple way to use checked math with given decimal precision.
