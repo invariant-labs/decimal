@@ -50,7 +50,7 @@ Basic example using types defined above would look like this:
     // multiplication doesn't so you can be used like this:
     let price = price * (Percentage::from_integer(1) - discount); // the resulting type is always the type of the left value
 
-For more examples continue to the `walkthrough.rs`
+For more examples continue to the [`walkthrough.rs`](https://github.com/invariant-labs/decimal/blob/master/src/walkthrough.rs)
 
 ## Parameters for the macro
 
