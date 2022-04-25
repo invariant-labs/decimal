@@ -63,22 +63,6 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
 
         impl std::fmt::Display for #struct_name {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                if #scale > 0 {
-                    write!(
-                        f,
-                        "{}.{}",
-                        self.get().checked_div(Self::one()).unwrap(),
-                        self.get().checked_rem(Self::one()).unwrap()
-                    )
-                } else {
-                    write!(f, "{}", self.get())
-                }
-            }
-        }
-
-        #[cfg(test)]
-        impl std::fmt::Display for #struct_name {
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 if Self::scale() > 0 {
                     let mut decimal_places = self.get().checked_rem(Self::one()).unwrap();
                     let mut non_zero_tail = 0;
