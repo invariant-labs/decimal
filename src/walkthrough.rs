@@ -77,6 +77,20 @@ mod walkthrough {
     }
 
     #[test]
+    fn example_implement_additional_feature() {
+        // Additional features can be easily added like so:
+        impl Percentage {
+            fn square(self) -> Self {
+                self.big_mul(self)
+            }
+        }
+
+        let percentage = Percentage(110); // 110%
+        let squared = percentage.square();
+        assert_eq!(squared, Percentage(121));
+    }
+
+    #[test]
     fn example_extract_overflowing_value() {
         // This would be rarely needed, but it's possible to handle overflow like so:
         let percentage = Percentage::from_integer(2); // 200%
