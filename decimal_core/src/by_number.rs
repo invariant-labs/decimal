@@ -16,8 +16,8 @@ pub fn generate_by_number(characteristics: DecimalCharacteristics) -> proc_macro
 
     proc_macro::TokenStream::from(quote!(
         impl ByNumber<#big_type> for #struct_name {
-            fn big_div_by_number(self, rhs: #big_type) -> #struct_name {
-                #struct_name::new(
+            fn big_div_by_number(self, rhs: #big_type) -> Self {
+                Self::new(
                     #big_type::try_from(self.get()).unwrap()
                         .checked_mul(
                             Self::one()
@@ -27,8 +27,8 @@ pub fn generate_by_number(characteristics: DecimalCharacteristics) -> proc_macro
                 )
             }
 
-            fn big_div_by_number_up(self, rhs: #big_type) -> #struct_name {
-                #struct_name::new(
+            fn big_div_by_number_up(self, rhs: #big_type) -> Self {
+                Self::new(
                     #big_type::try_from(self.get()).unwrap()
                         .checked_mul(
                             Self::one()

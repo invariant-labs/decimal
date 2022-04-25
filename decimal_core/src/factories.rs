@@ -11,7 +11,10 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
         ..
     } = characteristics;
 
-    let module_name = string_to_ident("tests_factories_", &struct_name.to_string());
+    let name_str = &struct_name.to_string();
+    let underlying_str = &underlying_type.to_string();
+
+    let module_name = string_to_ident("tests_factories_", &name_str);
 
     proc_macro::TokenStream::from(quote!(
 
@@ -27,8 +30,11 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
         {
             fn from_integer(integer: T) -> Self {
                 Self::new({
-                    let base: #underlying_type = integer.try_into().unwrap_or_else(|_| std::panic!("integer too to create decimal"));
-                    base.checked_mul(Self::one()).unwrap()
+                    let base: #underlying_type = integer.try_into()
+                        .unwrap_or_else(|_| std::panic!("decimal: integer value can't fit into `{}` type in {}::from_integer()", #underlying_str, #name_str));
+                    base
+                        .checked_mul(Self::one())
+                        .unwrap_or_else(|| std::panic!("decimal: overflow while adjusting scale in method {}::from_integer()", #name_str))
                 })
             }
 

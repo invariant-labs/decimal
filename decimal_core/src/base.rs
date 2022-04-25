@@ -22,13 +22,13 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
                 self.#field_name
             }
 
-            fn new(value: #underlying_type) -> #struct_name {
+            fn new(value: Self::U) -> Self {
                 let mut created = #struct_name::default();
                 created.#field_name = value;
                 created
             }
 
-            fn here<T: TryFrom<#underlying_type>>(&self) -> T {
+            fn here<T: TryFrom<Self::U>>(&self) -> T {
                 match T::try_from(self.#field_name) {
                     Ok(v) => v,
                     Err(_) => std::panic!("could not parse {} to {}", "T", "u8"),

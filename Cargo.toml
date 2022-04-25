@@ -1,12 +1,15 @@
 [package]
-name = "decimal"
-version = "0.1.0"
+name = "checked_decimal_macro"
+version = "0.1.3"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+readme = "README.md"
+authors = ["Mateusz Zając <matzayonc@gmail.com>"]
+repository = "https://github.com/invariant-labs/decimal"
+license = "MIT"
+description = "This is a Rust fixed-point numeric library targeting blockchain development. Originally created and used as a part of the Invariant Protocol. The current version leverages macros, traits and generics to exchange dozens of lines of error prone code with a single line and generating the rest."
 
 [dependencies]
-decimal_core = { path = "decimal_core" }
+checked_decimal_macro_core = { path = "decimal_core"}
 integer-sqrt = "0.1.5"
 uint = "0.9"
 num-traits = "0.2.14"
