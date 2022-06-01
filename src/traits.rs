@@ -23,6 +23,10 @@ pub trait Others<T> {
     fn div_up(self, rhs: T) -> Self;
 }
 
+pub trait OthersSameType {
+    fn sub_abs(self, rhs: Self) -> Self;
+}
+
 pub trait Factories<T> {
     fn from_integer(integer: T) -> Self;
     fn from_scale(integer: T, scale: u8) -> Self;

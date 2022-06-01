@@ -58,7 +58,16 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
                         .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div_up()", #name_str))
                 )
             }
+        }
 
+        impl OthersSameType for #struct_name {
+            fn sub_abs(self, rhs: Self) -> Self {
+                if self.get() > rhs.get() {
+                    self - rhs
+                } else {
+                    rhs - self
+                }
+            }
         }
 
         impl std::fmt::Display for #struct_name {
@@ -102,6 +111,14 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
                 let a = #struct_name::new(1);
                 let b = #struct_name::new(#struct_name::one());
                 assert_eq!(a.div_up(b), a);
+            }
+
+            #[test]
+            fn test_sub_abs() {
+                let a = #struct_name::new(1);
+                let b = #struct_name::new(2);
+                assert_eq!(a.sub_abs(b), a);
+                assert_eq!(b.sub_abs(a), a);
             }
         }
     ))
