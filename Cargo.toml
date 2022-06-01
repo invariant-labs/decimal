@@ -9,8 +9,8 @@ license = "MIT"
 description = "This is a Rust fixed-point numeric library targeting blockchain development. Originally created and used as a part of the Invariant Protocol. The current version leverages macros, traits and generics to exchange dozens of lines of error prone code with a single line and generating the rest."
 
 [dependencies]
-# checked_decimal_macro_core = { path = "decimal_core"}
-checked_decimal_macro_core = "0.1.4"
+checked_decimal_macro_core = { path = "decimal_core"}
+# checked_decimal_macro_core = "0.1.4"
 integer-sqrt = "0.1.5"
 uint = "0.9"
 num-traits = "0.2.14"
