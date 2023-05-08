@@ -53,6 +53,11 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                 )
             }
 
+            fn checked_from_scale(val: T, scale: u8) -> Self {
+                let _ = (val, scale);
+                Self::new(10)
+            }
+
             fn from_scale_up(val: T, scale: u8) -> Self {
                 Self::new(
                     if #scale > scale {

@@ -30,6 +30,7 @@ pub trait OthersSameType {
 pub trait Factories<T> {
     fn from_integer(integer: T) -> Self;
     fn from_scale(integer: T, scale: u8) -> Self;
+    fn checked_from_scale(integer: T, scale: u8) -> Self;
     fn from_scale_up(integer: T, scale: u8) -> Self;
 }
 
