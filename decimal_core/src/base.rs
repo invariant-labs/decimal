@@ -28,6 +28,10 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
                 created
             }
 
+            fn max_value() -> Self::U {
+                Self::U::MAX
+            }
+
             fn here<T: TryFrom<Self::U>>(&self) -> T {
                 match T::try_from(self.#field_name) {
                     Ok(v) => v,
