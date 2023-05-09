@@ -30,8 +30,12 @@ pub trait OthersSameType {
 pub trait Factories<T> {
     fn from_integer(integer: T) -> Self;
     fn from_scale(integer: T, scale: u8) -> Self;
-    fn checked_from_scale(integer: T, scale: u8) -> Self;
+    fn checked_from_scale(integer: T, scale: u8) -> Result<u8, String>;
     fn from_scale_up(integer: T, scale: u8) -> Self;
+}
+
+pub trait Test{
+    fn mock() -> Result<u8, String>;
 }
 
 pub trait BetweenDecimals<T> {
