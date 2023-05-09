@@ -56,14 +56,15 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
             fn checked_from_scale(val: T, scale: u8) -> Result<Self, String> {
                 Ok(Self::new(
                     if #scale > scale {
-                        let base: #underlying_type = val.try_into().map_err(|_| "decimal: can't convert value")?;
-                        let multiplier: u128 = 10u128.checked_pow((#scale - scale) as u32).unwrap();
-                        base.checked_mul(multiplier.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))).unwrap()
+                        let base: #underlying_type = val.try_into().map_err(|_| "decimal: can't convert base")?;
+                        let multiplier: u128 = 10u128.checked_pow((#scale - scale) as u32).ok_or_else(|| "decimal: multiplier overflow")?;
+                        base.checked_mul(multiplier.try_into().map_err(|_| "decimal: can't convert multiplier")?).ok_or_else(|| "decimal: (multiplier * base) overflow")?
                     } else {
-                        let denominator: u128 = 10u128.checked_pow((scale - #scale) as u32).unwrap();
+                        let denominator: u128 = 10u128.checked_pow((scale - #scale) as u32).ok_or_else(|| "decimal: denominator overflow")?;
                          val.checked_div(
-                            &denominator.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))
-                        ).unwrap().try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))
+                            &denominator.try_into().map_err(|_| "decimal: can't convert denominator")?
+                        ).ok_or_else(|| "decimal: (base / denominator) overflow")?
+                        .try_into().map_err(|_| "decimal: can't convert value")?
                     }
                 ))
             }
