@@ -27,16 +27,13 @@ pub trait OthersSameType {
     fn sub_abs(self, rhs: Self) -> Self;
 }
 
-pub trait Factories<T> {
+pub trait Factories<T>: Sized {
     fn from_integer(integer: T) -> Self;
     fn from_scale(integer: T, scale: u8) -> Self;
-    fn checked_from_scale(integer: T, scale: u8) -> Result<u8, String>;
+    fn checked_from_scale(integer: T, scale: u8) -> Result<Self, String>;
     fn from_scale_up(integer: T, scale: u8) -> Self;
 }
 
-pub trait Test{
-    fn mock() -> Result<u8, String>;
-}
 
 pub trait BetweenDecimals<T> {
     fn from_decimal(other: T) -> Self;

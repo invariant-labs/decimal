@@ -9,7 +9,6 @@ mod ops;
 mod others;
 mod structs;
 mod utils;
-mod test;
 
 use structs::DecimalCharacteristics;
 
@@ -72,7 +71,6 @@ pub fn decimal(
     result.extend(by_number::generate_by_number(characteristics.clone()));
     result.extend(others::generate_others(characteristics.clone()));
     result.extend(factories::generate_factories(characteristics.clone()));
-    result.extend(test::generate_tests(characteristics.clone()));
 
     result.extend(proc_macro::TokenStream::from(quote! {
         impl #struct_name {

@@ -53,8 +53,19 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                 )
             }
 
-            fn checked_from_scale(integer: T, scale: u8) -> Result<u8, String> {
-                Ok(0u8)
+            fn checked_from_scale(val: T, scale: u8) -> Result<Self, String> {
+                Ok(Self::new(
+                    if #scale > scale {
+                        let base: #underlying_type = val.try_into().map_err(|_| "decimal: can't convert value")?;
+                        let multiplier: u128 = 10u128.checked_pow((#scale - scale) as u32).unwrap();
+                        base.checked_mul(multiplier.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))).unwrap()
+                    } else {
+                        let denominator: u128 = 10u128.checked_pow((scale - #scale) as u32).unwrap();
+                         val.checked_div(
+                            &denominator.try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))
+                        ).unwrap().try_into().unwrap_or_else(|_| std::panic!("decimal: can't convert value"))
+                    }
+                ))
             }
 
             fn from_scale_up(val: T, scale: u8) -> Self {
@@ -93,67 +104,67 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
         }
 
 
-        // #[cfg(test)]
-        // pub mod #module_name {
-        //     use super::*;
+        #[cfg(test)]
+        pub mod #module_name {
+            use super::*;
 
-        //     #[test]
-        //     fn test_from_integer() {
-        //         assert_eq!(
-        //             #struct_name::from_integer(0),
-        //             #struct_name::new(0)
-        //         );
-        //     }
+            #[test]
+            fn test_from_integer() {
+                assert_eq!(
+                    #struct_name::from_integer(0),
+                    #struct_name::new(0)
+                );
+            }
 
-        //     fn test_from_scale() {
-        //         assert_eq!(
-        //             #struct_name::from_scale(0, 0),
-        //             #struct_name::new(0)
-        //         );
-        //         assert_eq!(
-        //             #struct_name::from_scale_up(0, 0),
-        //             #struct_name::new(0)
-        //         );
+            fn test_from_scale() {
+                assert_eq!(
+                    #struct_name::from_scale(0, 0),
+                    #struct_name::new(0)
+                );
+                assert_eq!(
+                    #struct_name::from_scale_up(0, 0),
+                    #struct_name::new(0)
+                );
 
-        //         assert_eq!(
-        //             #struct_name::from_scale(0, 3),
-        //             #struct_name::new(0)
-        //         );
-        //         assert_eq!(
-        //             #struct_name::from_scale_up(0, 3),
-        //             #struct_name::new(0)
-        //         );
+                assert_eq!(
+                    #struct_name::from_scale(0, 3),
+                    #struct_name::new(0)
+                );
+                assert_eq!(
+                    #struct_name::from_scale_up(0, 3),
+                    #struct_name::new(0)
+                );
 
-        //         assert_eq!(
-        //             #struct_name::from_scale(42, #scale),
-        //             #struct_name::new(42)
-        //         );
-        //         assert_eq!(
-        //             #struct_name::from_scale_up(42, #scale),
-        //             #struct_name::new(42)
-        //         );
+                assert_eq!(
+                    #struct_name::from_scale(42, #scale),
+                    #struct_name::new(42)
+                );
+                assert_eq!(
+                    #struct_name::from_scale_up(42, #scale),
+                    #struct_name::new(42)
+                );
 
 
-        //         assert_eq!(
-        //             #struct_name::from_scale(42, #scale),
-        //             #struct_name::new(42)
-        //         );
-        //         assert_eq!(
-        //             #struct_name::from_scale_up(42, #scale),
-        //             #struct_name::new(42)
-        //         );
+                assert_eq!(
+                    #struct_name::from_scale(42, #scale),
+                    #struct_name::new(42)
+                );
+                assert_eq!(
+                    #struct_name::from_scale_up(42, #scale),
+                    #struct_name::new(42)
+                );
 
-        //         let denominator = (10 as #underlying_type).checked_pow((#scale + 1) as u32).unwrap().checked_add(1).unwrap();
-        //         assert_eq!(
-        //             #struct_name::from_scale(42, #scale + 1),
-        //             #struct_name::new(4)
-        //         );
-        //         assert_eq!(
-        //             #struct_name::from_scale_up(42, #scale + 1),
-        //             #struct_name::new(5)
-        //         );
+                let denominator = (10 as #underlying_type).checked_pow((#scale + 1) as u32).unwrap().checked_add(1).unwrap();
+                assert_eq!(
+                    #struct_name::from_scale(42, #scale + 1),
+                    #struct_name::new(4)
+                );
+                assert_eq!(
+                    #struct_name::from_scale_up(42, #scale + 1),
+                    #struct_name::new(5)
+                );
 
-        //     }
-        // }
+            }
+        }
     ))
 }
