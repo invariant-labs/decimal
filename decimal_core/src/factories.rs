@@ -53,7 +53,7 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                 )
             }
 
-            fn checked_from_scale(val: T, scale: u8) -> Result<Self, String> {
+            fn checked_from_scale(val: T, scale: u8) -> std::result::Result<Self, String> {
                 Ok(Self::new(
                     if #scale > scale {
                         let base: #underlying_type = val.try_into().map_err(|_| "decimal: can't convert to base")?;
@@ -99,7 +99,7 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                 Self::from_scale(other.get(), T::scale())
             }
 
-            fn checked_from_decimal(other: T) -> Result<Self, String> {
+            fn checked_from_decimal(other: T) -> std::result::Result<Self, String> {
                 Self::checked_from_scale(other.get(), T::scale())
             }
 
