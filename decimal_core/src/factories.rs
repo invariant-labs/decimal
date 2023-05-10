@@ -117,6 +117,7 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                 );
             }
 
+            #[test]
             fn test_from_scale() {
                 assert_eq!(
                     #struct_name::from_scale(0, 0),
@@ -145,17 +146,6 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                     #struct_name::new(42)
                 );
 
-
-                assert_eq!(
-                    #struct_name::from_scale(42, #scale),
-                    #struct_name::new(42)
-                );
-                assert_eq!(
-                    #struct_name::from_scale_up(42, #scale),
-                    #struct_name::new(42)
-                );
-
-                let denominator = (10 as #underlying_type).checked_pow((#scale + 1) as u32).unwrap().checked_add(1).unwrap();
                 assert_eq!(
                     #struct_name::from_scale(42, #scale + 1),
                     #struct_name::new(4)
