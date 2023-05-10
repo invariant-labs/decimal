@@ -99,6 +99,10 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                 Self::from_scale(other.get(), T::scale())
             }
 
+            fn checked_from_decimal(other: T) -> Result<Self, String> {
+                Self::checked_from_scale(other.get(), T::scale())
+            }
+
             fn from_decimal_up(other: T) -> Self {
                 Self::from_scale_up(other.get(), T::scale())
             }

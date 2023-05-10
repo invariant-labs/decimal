@@ -36,9 +36,9 @@ pub trait Factories<T>: Sized {
     fn from_scale_up(integer: T, scale: u8) -> Self;
 }
 
-
-pub trait BetweenDecimals<T> {
+pub trait BetweenDecimals<T>: Sized {
     fn from_decimal(other: T) -> Self;
+    fn checked_from_decimal(other: T) -> Result<Self, String>;
     fn from_decimal_up(other: T) -> Self;
 }
 
