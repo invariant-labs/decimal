@@ -156,6 +156,36 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                 );
 
             }
+
+            #[test]
+            fn test_checked_from_scale() {
+                assert_eq!(
+                    #struct_name::checked_from_scale(0, 0).unwrap(),
+                    #struct_name::new(0)
+                );
+
+                assert_eq!(
+                    #struct_name::checked_from_scale(0, 3).unwrap(),
+                    #struct_name::new(0)
+                );
+
+                assert_eq!(
+                    #struct_name::checked_from_scale(42, #scale).unwrap(),
+                    #struct_name::new(42)
+                );
+
+                assert_eq!(
+                    #struct_name::checked_from_scale(42, #scale + 1).unwrap(),
+                    #struct_name::new(4)
+                );
+
+                let max_val = #struct_name::max_value();
+                assert_eq!(
+                    #struct_name::checked_from_scale(max_val, 100_000).is_err(),
+                    true
+                );
+
+            }
         }
     ))
 }
