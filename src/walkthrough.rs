@@ -71,6 +71,12 @@ mod walkthrough {
             result,
             Price::new(34028236692093846346337460743176821145u128)
         );
+
+        let price = Price::checked_from_decimal(Percentage::from_integer(1)).unwrap();
+        assert_eq!(price, Price::new(10000));
+
+        let convert_err = Percentage::checked_from_decimal(Price::max()).unwrap_err();
+        assert_eq!(convert_err, "decimal: can't convert to result");
     }
 
     #[test]
