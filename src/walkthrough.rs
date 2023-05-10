@@ -59,6 +59,27 @@ mod walkthrough {
     }
 
     #[test]
+    fn example_handle_overflow() {
+        let max_price_value = Price::max_value();
+        let price_scale = Price::scale();
+
+        let overflow_err = Price::checked_from_scale(max_price_value, price_scale - 1).unwrap_err();
+        assert_eq!(overflow_err, "decimal: (multiplier * base) overflow");
+
+        let result = Price::checked_from_scale(max_price_value, price_scale + 1).unwrap();
+        assert_eq!(
+            result,
+            Price::new(34028236692093846346337460743176821145u128)
+        );
+
+        let price = Price::checked_from_decimal(Percentage::from_integer(1)).unwrap();
+        assert_eq!(price, Price::new(10000));
+
+        let convert_err = Percentage::checked_from_decimal(Price::max()).unwrap_err();
+        assert_eq!(convert_err, "decimal: can't convert to result");
+    }
+
+    #[test]
     #[should_panic]
     fn example_overflow_without_being_too_big() {
         let percentage = Percentage(110); // 110%
