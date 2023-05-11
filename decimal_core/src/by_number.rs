@@ -27,6 +27,10 @@ pub fn generate_by_number(characteristics: DecimalCharacteristics) -> proc_macro
                 )
             }
 
+            fn checked_big_div_by_number(self, rhs: #big_type) -> std::result::Result<Self, String> {
+                Err("not implemented".to_string())
+            }
+
             fn big_div_by_number_up(self, rhs: #big_type) -> Self {
                 Self::new(
                     #big_type::try_from(self.get()).unwrap()
