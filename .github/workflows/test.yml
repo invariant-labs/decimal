@@ -1,0 +1,32 @@
+name: Test project
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  rust-latest:
+    runs-on: ubuntu-latest
+    container: rust:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build and test with Rust latest
+        run: |
+          cargo build --verbose
+          cargo test --verbose
+
+  rust-nightly:
+    runs-on: ubuntu-latest
+    container: rustlang/rust:nightly
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build and test with Rust nightly
+        run: |
+          cargo build --verbose
+          cargo test --verbose
