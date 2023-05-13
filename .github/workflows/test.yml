@@ -8,23 +8,24 @@ on:
     branches:
       - master
 
-stages:
-  - build
-
 jobs:
   rust-latest:
-    stage: build
-    image: rust:latest
+    runs-on: ubuntu-latest
+    container: rust:latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Build and test with Rust latest
         run: |
           cargo build --verbose
           cargo test --verbose
 
   rust-nightly:
-    stage: build
-    image: rustlang/rust:nightly
+    runs-on: ubuntu-latest
+    container: rustlang/rust:nightly
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Build and test with Rust nightly
         run: |
           cargo build --verbose
