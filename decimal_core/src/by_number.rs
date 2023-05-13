@@ -30,7 +30,7 @@ pub fn generate_by_number(characteristics: DecimalCharacteristics) -> proc_macro
             fn checked_big_div_by_number(self, rhs: #big_type) -> std::result::Result<Self, String> {
                 Ok(Self::new(
                     #big_type::try_from(self.get()).map_err(|_| "decimal: can't convert self to big_type")?
-                    .checked_mul(Self::one()).ok_or_else(|| "decimal: (self * Self::one()) multiplication overflow")?
+                    .checked_mul(Self::checked_one()?).ok_or_else(|| "decimal: (self * Self::one()) multiplication overflow")?
                     .checked_div(rhs).ok_or_else(|| "decimal: ((self * Self::one()) / rhs) division overflow")?
                     .try_into().map_err(|_| "decimal: can't convert to result")?
                 ))
