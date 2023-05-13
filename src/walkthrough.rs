@@ -60,6 +60,7 @@ mod walkthrough {
 
     #[test]
     fn example_handle_overflow() {
+        let max_price = Price::max();
         let max_price_value = Price::max_value();
         let price_scale = Price::scale();
 
@@ -76,6 +77,15 @@ mod walkthrough {
         assert_eq!(price, Price::new(10000));
 
         let convert_err = Percentage::checked_from_decimal(Price::max()).unwrap_err();
+        assert_eq!(convert_err, "decimal: can't convert to result");
+
+        let three = U256::from(Price::from_integer(3).get());
+        let result = Price::new(132_493).checked_big_div_by_number(three);
+        assert_eq!(result, Ok(Price::new(44164)));
+
+        let convert_err = max_price
+            .checked_big_div_by_number(U256::from(1))
+            .unwrap_err();
         assert_eq!(convert_err, "decimal: can't convert to result");
     }
 
