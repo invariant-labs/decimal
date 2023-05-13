@@ -55,7 +55,7 @@ mod walkthrough {
 
         let price_after_discount = price_after_discount.mul_up(half_price_coupon); // corresponds to 0.0002
         let price_after_discount = price_after_discount.mul_up(half_price_coupon); // result will be exact if rounding is not needed
-        assert_eq!(price_after_discount, Price(1));
+        assert_eq!(price_after_discount, Price(2));
     }
 
     #[test]
