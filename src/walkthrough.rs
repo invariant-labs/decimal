@@ -64,29 +64,47 @@ mod walkthrough {
         let max_price_value = Price::max_value();
         let price_scale = Price::scale();
 
-        let overflow_err = Price::checked_from_scale(max_price_value, price_scale - 1).unwrap_err();
-        assert_eq!(overflow_err, "decimal: (multiplier * base) overflow");
+        // checked_add
+        {
+            let price = Price::new(27).checked_add(Price::new(479));
+            assert_eq!(price, Ok(Price::new(506)));
 
-        let result = Price::checked_from_scale(max_price_value, price_scale + 1).unwrap();
-        assert_eq!(
-            result,
-            Price::new(34028236692093846346337460743176821145u128)
-        );
+            let percentage = Percentage::max()
+                .checked_add(Percentage::new(1))
+                .unwrap_err();
+            assert_eq!(percentage, "decimal: (self + rhs) additional overflow")
+        }
+        // checked_from_scale
+        {
+            let overflow_err =
+                Price::checked_from_scale(max_price_value, price_scale - 1).unwrap_err();
+            assert_eq!(overflow_err, "decimal: (multiplier * base) overflow");
 
-        let price = Price::checked_from_decimal(Percentage::from_integer(1)).unwrap();
-        assert_eq!(price, Price::new(10000));
+            let result = Price::checked_from_scale(max_price_value, price_scale + 1).unwrap();
+            assert_eq!(
+                result,
+                Price::new(34028236692093846346337460743176821145u128)
+            );
+        }
+        // checked_from_decimal
+        {
+            let price = Price::checked_from_decimal(Percentage::from_integer(1)).unwrap();
+            assert_eq!(price, Price::new(10000));
 
-        let convert_err = Percentage::checked_from_decimal(Price::max()).unwrap_err();
-        assert_eq!(convert_err, "decimal: can't convert to result");
+            let convert_err = Percentage::checked_from_decimal(Price::max()).unwrap_err();
+            assert_eq!(convert_err, "decimal: can't convert to result");
+        }
+        // checked_big_div_by_number
+        {
+            let three = U256::from(Price::from_integer(3).get());
+            let result = Price::new(132_493).checked_big_div_by_number(three);
+            assert_eq!(result, Ok(Price::new(44164)));
 
-        let three = U256::from(Price::from_integer(3).get());
-        let result = Price::new(132_493).checked_big_div_by_number(three);
-        assert_eq!(result, Ok(Price::new(44164)));
-
-        let convert_err = max_price
-            .checked_big_div_by_number(U256::from(1))
-            .unwrap_err();
-        assert_eq!(convert_err, "decimal: can't convert to result");
+            let convert_err = max_price
+                .checked_big_div_by_number(U256::from(1))
+                .unwrap_err();
+            assert_eq!(convert_err, "decimal: can't convert to result");
+        }
     }
 
     #[test]
