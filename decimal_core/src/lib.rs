@@ -4,6 +4,7 @@ use syn::parse_macro_input;
 mod base;
 mod big_ops;
 mod by_number;
+mod checked_ops;
 mod factories;
 mod ops;
 mod others;
@@ -71,6 +72,7 @@ pub fn decimal(
     result.extend(by_number::generate_by_number(characteristics.clone()));
     result.extend(others::generate_others(characteristics.clone()));
     result.extend(factories::generate_factories(characteristics.clone()));
+    result.extend(checked_ops::generate_checked_ops(characteristics.clone()));
 
     result.extend(proc_macro::TokenStream::from(quote! {
         impl #struct_name {

@@ -55,3 +55,7 @@ pub trait ByNumber<B>: Sized {
     fn checked_big_div_by_number(self, number: B) -> std::result::Result<Self, String>;
     fn big_div_by_number_up(self, number: B) -> Self;
 }
+
+pub trait CheckedOps: Sized {
+    fn checked_add(self, rhs: Self) -> std::result::Result<Self, String>;
+}
