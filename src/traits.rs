@@ -10,6 +10,9 @@ pub trait Decimal {
     fn here<Y: TryFrom<Self::U>>(&self) -> Y;
     fn scale() -> u8;
     fn one<T: TryFrom<u128>>() -> T;
+    fn checked_one<T: TryFrom<u128>>() -> std::result::Result<T, String>
+    where
+        T::Error: std::fmt::Display;
     fn almost_one<T: TryFrom<u128>>() -> T;
 }
 
