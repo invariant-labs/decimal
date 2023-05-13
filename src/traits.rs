@@ -10,6 +10,9 @@ pub trait Decimal {
     fn here<Y: TryFrom<Self::U>>(&self) -> Y;
     fn scale() -> u8;
     fn one<T: TryFrom<u128>>() -> T;
+    fn checked_one<T: TryFrom<u128>>() -> std::result::Result<T, String>
+    where
+        T::Error: std::fmt::Display;
     fn almost_one<T: TryFrom<u128>>() -> T;
 }
 
@@ -47,7 +50,12 @@ pub trait ToValue<T, B> {
     fn big_mul_to_value_up(self, value: T) -> B;
 }
 
-pub trait ByNumber<B> {
+pub trait ByNumber<B>: Sized {
     fn big_div_by_number(self, number: B) -> Self;
+    fn checked_big_div_by_number(self, number: B) -> std::result::Result<Self, String>;
     fn big_div_by_number_up(self, number: B) -> Self;
+}
+
+pub trait CheckedOps: Sized {
+    fn checked_add(self, rhs: Self) -> std::result::Result<Self, String>;
 }

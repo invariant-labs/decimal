@@ -7,7 +7,6 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
     let DecimalCharacteristics {
         struct_name,
         underlying_type,
-        scale,
         ..
     } = characteristics;
 
