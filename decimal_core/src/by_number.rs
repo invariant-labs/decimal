@@ -93,6 +93,13 @@ pub fn generate_by_number(characteristics: DecimalCharacteristics) -> proc_macro
             }
 
             #[test]
+            fn test_checked_big_div_by_number() {
+                let a = #struct_name::new(2);
+                let b: #big_type = #struct_name::one();
+                assert_eq!(a.checked_big_div_by_number(b), Ok(#struct_name::new(2)));
+            }
+
+            #[test]
             fn test_big_mul_to_value () {
                 let a = #struct_name::new(2);
                 let b = #struct_name::from_integer(1);
