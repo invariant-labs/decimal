@@ -26,6 +26,15 @@ pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_mac
             }
         }
 
+        // impl CheckedOps for #struct_name {
+        //     fn checked_sub(self, rhs: Self) -> std::result::Result<Self, String> {
+        //         Ok(Self::new(
+        //             self.get().checked_sub(rhs.get())
+        //             .ok_or_else(|| "decimal: (self - rhs) subtraction underflow")?
+        //         ))
+        //     }
+        // }
+
         #[cfg(test)]
         pub mod #module_name {
             use super::*;
