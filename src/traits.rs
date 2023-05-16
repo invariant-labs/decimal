@@ -58,5 +58,5 @@ pub trait ByNumber<B>: Sized {
 
 pub trait CheckedOps: Sized {
     fn checked_add(self, rhs: Self) -> std::result::Result<Self, String>;
-    // fn checked_sub(self, rhs: Self) -> std::result::Result<Self, String>;
+    fn checked_sub(self, rhs: Self) -> std::result::Result<Self, String>;
 }
