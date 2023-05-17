@@ -74,6 +74,19 @@ mod walkthrough {
                 .unwrap_err();
             assert_eq!(percentage, "decimal: (self + rhs) additional overflow")
         }
+        // checked_sub
+        {
+            let price = Price::new(479).checked_sub(Price::new(2597457));
+            assert_eq!(
+                price,
+                Err("decimal: (self - rhs) subtraction underflow".to_string())
+            );
+
+            let percentage = Percentage::from_integer(1);
+            let result = percentage.checked_sub(Percentage::new(10));
+            assert_eq!(result, Ok(Percentage::new(90)));
+        }
+
         // checked_from_scale
         {
             let overflow_err =
