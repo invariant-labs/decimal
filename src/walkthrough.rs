@@ -107,14 +107,20 @@ mod walkthrough {
             let convert_err = Percentage::checked_from_decimal(Price::max_instance()).unwrap_err();
             assert_eq!(convert_err, "decimal: can't convert to result");
         }
-        // checked_big_div_by_number
+        // checked_big_div_by_number & checked_big_div_by_number_up
         {
             let three = U256::from(Price::from_integer(3).get());
             let result = Price::new(132_493).checked_big_div_by_number(three);
-            assert_eq!(result, Ok(Price::new(44164)));
+            assert_eq!(result, Ok(Price::new(44_164)));
+            let result = Price::new(132_493).checked_big_div_by_number_up(three);
+            assert_eq!(result, Ok(Price::new(44_165)));
 
             let convert_err = max_price
                 .checked_big_div_by_number(U256::from(1))
+                .unwrap_err();
+            assert_eq!(convert_err, "decimal: can't convert to result");
+            let convert_err = max_price
+                .checked_big_div_by_number_up(U256::from(1))
                 .unwrap_err();
             assert_eq!(convert_err, "decimal: can't convert to result");
         }
