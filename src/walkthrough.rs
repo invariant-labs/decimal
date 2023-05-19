@@ -60,7 +60,7 @@ mod walkthrough {
 
     #[test]
     fn example_handle_overflow() {
-        let max_price = Price::max();
+        let max_price = Price::max_instance();
         let max_price_value = Price::max_value();
         let price_scale = Price::scale();
 
@@ -69,7 +69,7 @@ mod walkthrough {
             let price = Price::new(27).checked_add(Price::new(479));
             assert_eq!(price, Ok(Price::new(506)));
 
-            let percentage = Percentage::max()
+            let percentage = Percentage::max_instance()
                 .checked_add(Percentage::new(1))
                 .unwrap_err();
             assert_eq!(percentage, "decimal: (self + rhs) additional overflow")
@@ -104,7 +104,7 @@ mod walkthrough {
             let price = Price::checked_from_decimal(Percentage::from_integer(1)).unwrap();
             assert_eq!(price, Price::new(10000));
 
-            let convert_err = Percentage::checked_from_decimal(Price::max()).unwrap_err();
+            let convert_err = Percentage::checked_from_decimal(Price::max_instance()).unwrap_err();
             assert_eq!(convert_err, "decimal: can't convert to result");
         }
         // checked_big_div_by_number
