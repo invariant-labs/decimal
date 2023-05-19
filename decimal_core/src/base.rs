@@ -32,7 +32,7 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
                 Self::U::MAX
             }
 
-            fn max() -> Self {
+            fn max_instance() -> Self {
                 Self::new(Self::max_value())
             }
 

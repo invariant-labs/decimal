@@ -4,16 +4,9 @@ use crate::utils::string_to_ident;
 use crate::DecimalCharacteristics;
 
 pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_macro::TokenStream {
-    let DecimalCharacteristics {
-        struct_name,
-        underlying_type,
-        scale,
-        ..
-    } = characteristics;
+    let DecimalCharacteristics { struct_name, .. } = characteristics;
 
     let name_str = &struct_name.to_string();
-    let underlying_str = &underlying_type.to_string();
-
     let module_name = string_to_ident("tests_checked_ops_", &name_str);
 
     proc_macro::TokenStream::from(quote!(
@@ -47,7 +40,7 @@ pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_mac
 
             #[test]
             fn test_overflow_checked_add() {
-                let max = #struct_name::max();
+                let max = #struct_name::max_instance();
                 let result = max.checked_add(#struct_name::new(1));
 
                 assert_eq!(result, Err("decimal: (self + rhs) additional overflow".to_string()));

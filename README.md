@@ -121,7 +121,7 @@ As you do know by this point the whole library is in a form of macro. Inside of 
     -   `fn get(&self) -> Self::U;` - the value of a decimal
     -   `fn new(value: Self::U) -> Self;` - the constructor
     -   `fn max_value() -> Self::U` - maximum value of underlying type
-    -   `fn max() -> Self` - `max_value()` wrapped by decimal
+    -   `fn max_instance() -> Self` - `max_value()` wrapped by decimal
     -   `fn here<Y: TryFrom<Self::U>>(&self) -> Y;` - same as get, but also 'tries into' the needed value
     -   `fn scale() -> u8;` - the amount of decimal places (given in the macro)
     -   `fn one<T: TryFrom<u128>>() -> T;` - basically `10^scale`, evaluated on the compile time
