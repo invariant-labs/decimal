@@ -52,8 +52,9 @@ pub trait ToValue<T, B> {
 
 pub trait ByNumber<B>: Sized {
     fn big_div_by_number(self, number: B) -> Self;
-    fn checked_big_div_by_number(self, number: B) -> std::result::Result<Self, String>;
     fn big_div_by_number_up(self, number: B) -> Self;
+    fn checked_big_div_by_number(self, number: B) -> std::result::Result<Self, String>;
+    fn checked_big_div_by_number_up(self, number: B) -> std::result::Result<Self, String>;
 }
 
 pub trait CheckedOps: Sized {
