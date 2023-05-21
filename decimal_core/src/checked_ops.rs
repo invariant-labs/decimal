@@ -14,14 +14,14 @@ pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_mac
             fn checked_add(self, rhs: Self) -> std::result::Result<Self, String> {
                 Ok(Self::new(
                     self.get().checked_add(rhs.get())
-                    .ok_or_else(|| "decimal: (self + rhs) additional overflow")?
+                    .ok_or_else(|| "checked_add: (self + rhs) additional overflow")?
                 ))
             }
 
             fn checked_sub(self, rhs: Self) -> std::result::Result<Self, String> {
                 Ok(Self::new(
                     self.get().checked_sub(rhs.get())
-                    .ok_or_else(|| "decimal: (self - rhs) subtraction underflow")?
+                    .ok_or_else(|| "checked_sub: (self - rhs) subtraction underflow")?
                 ))
             }
         }
@@ -43,7 +43,7 @@ pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_mac
                 let max = #struct_name::max_instance();
                 let result = max.checked_add(#struct_name::new(1));
 
-                assert_eq!(result, Err("decimal: (self + rhs) additional overflow".to_string()));
+                assert_eq!(result, Err("checked_add: (self + rhs) additional overflow".to_string()));
             }
 
             #[test]
@@ -59,7 +59,7 @@ pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_mac
                 let min = #struct_name::new(0);
                 let result = min.checked_sub(#struct_name::new(1));
 
-                assert_eq!(result, Err("decimal: (self - rhs) subtraction underflow".to_string()));
+                assert_eq!(result, Err("checked_sub: (self - rhs) subtraction underflow".to_string()));
             }
         }
     ))

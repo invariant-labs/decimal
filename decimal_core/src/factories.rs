@@ -56,15 +56,15 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
             fn checked_from_scale(val: T, scale: u8) -> std::result::Result<Self, String> {
                 Ok(Self::new(
                     if #scale > scale {
-                        let base: #underlying_type = val.try_into().map_err(|_| "decimal: can't convert to base")?;
-                        let multiplier: u128 = 10u128.checked_pow((#scale - scale) as u32).ok_or_else(|| "decimal: multiplier overflow")?;
-                        base.checked_mul(multiplier.try_into().map_err(|_| "decimal: can't convert to multiplier")?).ok_or_else(|| "decimal: (multiplier * base) overflow")?
+                        let base: #underlying_type = val.try_into().map_err(|_| "checked_from_scale: can't convert to base")?;
+                        let multiplier: u128 = 10u128.checked_pow((#scale - scale) as u32).ok_or_else(|| "checked_from_scale: multiplier overflow")?;
+                        base.checked_mul(multiplier.try_into().map_err(|_| "checked_from_scale: can't convert to multiplier")?).ok_or_else(|| "checked_from_scale: (multiplier * base) overflow")?
                     } else {
-                        let denominator: u128 = 10u128.checked_pow((scale - #scale) as u32).ok_or_else(|| "decimal: denominator overflow")?;
+                        let denominator: u128 = 10u128.checked_pow((scale - #scale) as u32).ok_or_else(|| "checked_from_scale: denominator overflow")?;
                          val.checked_div(
-                            &denominator.try_into().map_err(|_| "decimal: can't convert to denominator")?
-                        ).ok_or_else(|| "decimal: (base / denominator) overflow")?
-                        .try_into().map_err(|_| "decimal: can't convert to result")?
+                            &denominator.try_into().map_err(|_| "checked_from_scale: can't convert to denominator")?
+                        ).ok_or_else(|| "checked_from_scale: (base / denominator) overflow")?
+                        .try_into().map_err(|_| "checked_from_scale: can't convert to result")?
                     }
                 ))
             }

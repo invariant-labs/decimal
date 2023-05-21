@@ -57,7 +57,7 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
             fn checked_one<T: TryFrom<u128>>() -> std::result::Result<T, String> where
                 T::Error: std::fmt::Display,
             {
-                T::try_from(#denominator).map_err(|err| format!("can not get one to type {} : {}", std::any::type_name::<T>(), err.to_string()))
+                T::try_from(#denominator).map_err(|err| format!("checked_one: can not get one to type {} : {}", std::any::type_name::<T>(), err.to_string()))
             }
 
             fn almost_one<T: TryFrom<u128>>() -> T {

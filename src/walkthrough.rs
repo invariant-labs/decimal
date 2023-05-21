@@ -72,14 +72,14 @@ mod walkthrough {
             let percentage = Percentage::max_instance()
                 .checked_add(Percentage::new(1))
                 .unwrap_err();
-            assert_eq!(percentage, "decimal: (self + rhs) additional overflow")
+            assert_eq!(percentage, "checked_add: (self + rhs) additional overflow")
         }
         // checked_sub
         {
             let price = Price::new(479).checked_sub(Price::new(2597457));
             assert_eq!(
                 price,
-                Err("decimal: (self - rhs) subtraction underflow".to_string())
+                Err("checked_sub: (self - rhs) subtraction underflow".to_string())
             );
 
             let percentage = Percentage::from_integer(1);
@@ -91,7 +91,10 @@ mod walkthrough {
         {
             let overflow_err =
                 Price::checked_from_scale(max_price_value, price_scale - 1).unwrap_err();
-            assert_eq!(overflow_err, "decimal: (multiplier * base) overflow");
+            assert_eq!(
+                overflow_err,
+                "checked_from_scale: (multiplier * base) overflow"
+            );
 
             let result = Price::checked_from_scale(max_price_value, price_scale + 1).unwrap();
             assert_eq!(
@@ -105,7 +108,7 @@ mod walkthrough {
             assert_eq!(price, Price::new(10000));
 
             let convert_err = Percentage::checked_from_decimal(Price::max_instance()).unwrap_err();
-            assert_eq!(convert_err, "decimal: can't convert to result");
+            assert_eq!(convert_err, "checked_from_scale: can't convert to result");
         }
         // checked_big_div_by_number & checked_big_div_by_number_up
         {
@@ -118,11 +121,18 @@ mod walkthrough {
             let convert_err = max_price
                 .checked_big_div_by_number(U256::from(1))
                 .unwrap_err();
-            assert_eq!(convert_err, "decimal: can't convert to result");
+            // checked_from_scale
+            assert_eq!(
+                convert_err,
+                "checked_big_div_by_number: can't convert to result"
+            );
             let convert_err = max_price
                 .checked_big_div_by_number_up(U256::from(1))
                 .unwrap_err();
-            assert_eq!(convert_err, "decimal: can't convert to result");
+            assert_eq!(
+                convert_err,
+                "checked_big_div_by_number_up: can't convert to result"
+            );
         }
     }
 
