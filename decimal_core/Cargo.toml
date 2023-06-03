@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Mateusz Zając <matzayonc@gmail.com>"]
 repository = "https://github.com/invariant-labs/decimal"
-description = "A package for macro used in `safe_decimal_core`"
+readme = "../README.md"
+description = "This is a Rust fixed-point numeric library targeting blockchain development. Originally created and used as a part of the Invariant Protocol. The current version leverages macros, traits and generics to exchange dozens of lines of error prone code with a single line and generating the rest."
 license = "MIT"
 
 [lib]
