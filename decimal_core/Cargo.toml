@@ -1,10 +1,10 @@
 [package]
-name = "checked_decimal_macro_core"
+name = "safe_decimal_core"
 version = "0.1.4"
 edition = "2021"
 authors = ["Mateusz Zając <matzayonc@gmail.com>"]
 repository = "https://github.com/invariant-labs/decimal"
-description = "A package for macro used in `checked_decimal_macro`"
+description = "A package for macro used in `safe_decimal_core`"
 license = "MIT"
 
 [lib]
