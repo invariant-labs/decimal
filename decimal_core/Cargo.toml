@@ -1,6 +1,6 @@
 [package]
 name = "safe_decimal_core"
-version = "0.1.4"
+version = "0.1.0"
 edition = "2021"
 authors = ["Mateusz Zając <matzayonc@gmail.com>"]
 repository = "https://github.com/invariant-labs/decimal"
