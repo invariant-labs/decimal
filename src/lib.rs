@@ -4,8 +4,8 @@ mod walkthrough;
 
 pub use crate::uint::U256;
 
-pub use checked_decimal_macro_core::decimal;
 pub use num_traits;
+pub use safe_decimal_core::decimal;
 pub use traits::*;
 
 #[cfg(test)]
