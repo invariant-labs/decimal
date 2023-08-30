@@ -69,6 +69,37 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                 ))
             }
 
+            fn checked_from_big_scale(val: T, scale: u8) -> std::result::Result<Self, String> {
+                // Ok(Self::new(
+                //     if #scale > scale {
+                //         // let base_tmp: #big_type = U256::from(val.try_into().map_err(|_| "checked_from_scale: can't convert to base")?);
+                //         let base: #underlying_type = U256::from(10i128).try_into().map_err(|_| "checked_from_scale: can't convert to base")?;
+                //         let multiplier: u128 = 10u128.checked_pow((#scale - scale) as u32).ok_or_else(|| "checked_from_scale: multiplier overflow")?;
+                //         base.checked_mul(multiplier.try_into().map_err(|_| "checked_from_scale: can't convert to multiplier")?).ok_or_else(|| "checked_from_scale: (multiplier * base) overflow")?
+                //     } else {
+                //         let denominator: u128 = 10u128.checked_pow((scale - #scale) as u32).ok_or_else(|| "checked_from_scale: denominator overflow")?;
+                //          val.checked_div(
+                //             &denominator.try_into().map_err(|_| "checked_from_scale: can't convert to denominator")?
+                //         ).ok_or_else(|| "checked_from_scale: (base / denominator) overflow")?
+                //         .try_into().map_err(|_| "checked_from_scale: can't convert to result")?
+                //     }
+                // ))
+                Ok(Self::new(
+                    if #scale > scale {
+                        // let base: U256 = U256::from(val.try_into().map_err(|_| "checked_from_scale: can't convert to base")?);
+                        let base: U256 = U256::from(val);
+                        let multiplier: U256 = U256::from(10u128).checked_pow((U256::from(#scale - scale))).ok_or_else(|| "checked_from_scale: multiplier overflow")?;
+                        base.checked_mul(multiplier.try_into().map_err(|_| "checked_from_scale: can't convert to multiplier")?).ok_or_else(|| "checked_from_scale: (multiplier * base) overflow")?
+                    } else {
+                        let denominator: U256 = U256::from(10u128).checked_pow(U256::from((scale - #scale))).ok_or_else(|| "checked_from_scale: denominator overflow")?;
+                         U256::from(val).checked_div(
+                            &denominator
+                        ).ok_or_else(|| "checked_from_scale: (base / denominator) overflow")?
+                        .try_into().map_err(|_| "checked_from_scale: can't convert to result")?
+                    }
+                ))
+            }
+
             fn from_scale_up(val: T, scale: u8) -> Self {
                 Self::new(
                     if #scale > scale {
@@ -101,6 +132,10 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
 
             fn checked_from_decimal(other: T) -> std::result::Result<Self, String> {
                 Self::checked_from_scale(other.get(), T::scale())
+            }
+
+            fn checked_from_big_decimal(other: T) -> std::result::Result<Self, String> {
+                Self::checked_from_big_scale(other.get(), T::scale())
             }
 
             fn from_decimal_up(other: T) -> Self {
