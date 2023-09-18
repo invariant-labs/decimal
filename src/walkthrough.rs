@@ -102,6 +102,14 @@ mod walkthrough {
                 Price::new(34028236692093846346337460743176821145u128)
             );
         }
+        // checked_from_scale_to_value
+        {
+            let result =  Price::checked_from_scale_to_value(max_price_value, price_scale - 1).unwrap();
+            assert_eq!(
+                result,
+                U256::from_dec_str("3402823669209384634633746074317682114550").unwrap()
+            );
+        }
         // checked_from_decimal
         {
             let price = Price::checked_from_decimal(Percentage::from_integer(1)).unwrap();
