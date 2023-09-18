@@ -39,9 +39,6 @@ pub trait Factories<T>: Sized {
     fn from_scale_up(integer: T, scale: u8) -> Self;
 }
 
-pub trait FactoriesToValue<T, B> {
-    fn checked_from_scale_to_value(integer: T, scale: u8) -> std::result::Result<B, String>;
-}
 
 pub trait BetweenDecimals<T>: Sized {
     fn from_decimal(other: T) -> Self;
@@ -52,6 +49,14 @@ pub trait BetweenDecimals<T>: Sized {
 pub trait ToValue<T, B> {
     fn big_mul_to_value(self, value: T) -> B;
     fn big_mul_to_value_up(self, value: T) -> B;
+}
+
+pub trait FactoriesToValue<T, B> {
+    fn checked_from_scale_to_value(integer: T, scale: u8) -> std::result::Result<B, String>;
+}
+
+pub trait BetweenDecimalsToValue<T, B> {
+    fn checked_from_decimal_to_value(other: T) -> std::result::Result<B, String>;
 }
 
 pub trait ByNumber<B>: Sized {

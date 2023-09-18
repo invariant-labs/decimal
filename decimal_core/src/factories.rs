@@ -140,6 +140,15 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
             }
         }
 
+        impl<T: Decimal, #big_type> BetweenDecimalsToValue<T, #big_type> for #struct_name
+        where
+            Self: FactoriesToValue<T::U, #big_type>,
+        {
+            fn checked_from_decimal_to_value(other: T) -> std::result::Result<#big_type, String> {
+                Self::checked_from_scale_to_value(other.get(), T::scale())
+            }
+        }
+
 
         #[cfg(test)]
         pub mod #module_name {
