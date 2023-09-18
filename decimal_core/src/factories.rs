@@ -8,6 +8,7 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
         struct_name,
         underlying_type,
         scale,
+        big_type,
         ..
     } = characteristics;
 
@@ -105,6 +106,46 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
 
             fn from_decimal_up(other: T) -> Self {
                 Self::from_scale_up(other.get(), T::scale())
+            }
+        }
+
+        impl<T> FactoriesToValue<T, #big_type> for #struct_name
+        where
+            T: TryInto<#underlying_type>,
+        {
+
+            fn checked_from_scale_to_value(val: T, scale: u8) -> std::result::Result<#big_type, String> {
+                Ok(
+                    if #scale > scale {
+                        let base: #big_type = #big_type::try_from(
+                            val.try_into().map_err(|_| "checked_from_scale_to_value: can't convert val to base")?)
+                            .map_err(|_| "checked_from_scale_to_value: can't convert val to big_type"
+                        )?;
+                        let multiplier: u128 = 10u128.checked_pow((#scale - scale) as u32).ok_or_else(|| "checked_from_scale_to_value: multiplier overflow")?;
+
+                        base.checked_mul(multiplier.try_into().map_err(|_| "checked_from_scale_to_value: can't convert multiplier to big_type")?)
+                        .ok_or_else(|| "checked_from_scale_to_value: (multiplier * base) overflow")?
+                    } else {
+                        let denominator: u128 = 10u128.checked_pow((scale - #scale) as u32).ok_or_else(|| "checked_from_scale_to_value: denominator overflow")?;
+                        let base: #big_type = #big_type::try_from(
+                            val.try_into().map_err(|_| "checked_from_scale_to_value: can't convert val to base")?)
+                            .map_err(|_| "checked_from_scale_to_value: can't convert val to big_type"
+                        )?;
+
+                        base.checked_div(
+                            denominator.try_into().map_err(|_| "checked_from_scale_to_value: can't convert denominator to big_type")?
+                        ).ok_or_else(|| "checked_from_scale_to_value: (base / denominator) overflow")?
+                        .try_into().map_err(|_| "checked_from_scale_to_value: can't convert to result")?
+                    })
+            }
+        }
+
+        impl<T: Decimal, #big_type> BetweenDecimalsToValue<T, #big_type> for #struct_name
+        where
+            Self: FactoriesToValue<T::U, #big_type>,
+        {
+            fn checked_from_decimal_to_value(other: T) -> std::result::Result<#big_type, String> {
+                Self::checked_from_scale_to_value(other.get(), T::scale())
             }
         }
 
