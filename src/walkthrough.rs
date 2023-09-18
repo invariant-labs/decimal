@@ -118,6 +118,11 @@ mod walkthrough {
             let convert_err = Percentage::checked_from_decimal(Price::max_instance()).unwrap_err();
             assert_eq!(convert_err, "checked_from_scale: can't convert to result");
         }
+        // checked_from_decimal_to_value
+        {
+            let result =  Price::checked_from_decimal_to_value(Price::max_instance()).unwrap();
+            assert_eq!(result, U256::from(Price::max_value()));
+        }
         // checked_big_div_by_number & checked_big_div_by_number_up
         {
             let three = U256::from(Price::from_integer(3).get());
