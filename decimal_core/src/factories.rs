@@ -251,7 +251,10 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                 assert_eq!(
                     #struct_name::checked_from_scale_to_value(max_val, 100_000).is_err(),
                     true
-                );     
+                );
+
+                let result: i32 = #struct_name::checked_from_scale_to_value(1, 30).unwrap().try_into().unwrap();
+                assert_eq!(result, 0);
             }
 
             #[test]
