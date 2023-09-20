@@ -121,6 +121,7 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                             val.try_into().map_err(|_| "checked_from_scale_to_value: can't convert val to base")?)
                             .map_err(|_| "checked_from_scale_to_value: can't convert val to big_type"
                         )?;
+                        // no possibility of overflow because of scale limit
                         let multiplier: u128 = 10u128.checked_pow((#scale - scale) as u32).ok_or_else(|| "checked_from_scale_to_value: multiplier overflow")?;
 
                         base.checked_mul(multiplier.try_into().map_err(|_| "checked_from_scale_to_value: can't convert multiplier to big_type")?)
