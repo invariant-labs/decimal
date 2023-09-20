@@ -121,11 +121,13 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                             val.try_into().map_err(|_| "checked_from_scale_to_value: can't convert val to base")?)
                             .map_err(|_| "checked_from_scale_to_value: can't convert val to big_type"
                         )?;
+                        // no possibility of overflow because of scale limit
                         let multiplier: u128 = 10u128.checked_pow((#scale - scale) as u32).ok_or_else(|| "checked_from_scale_to_value: multiplier overflow")?;
 
                         base.checked_mul(multiplier.try_into().map_err(|_| "checked_from_scale_to_value: can't convert multiplier to big_type")?)
                         .ok_or_else(|| "checked_from_scale_to_value: (multiplier * base) overflow")?
                     } else {
+                        // no possibility of overflow because of scale limit
                         let denominator: u128 = 10u128.checked_pow((scale - #scale) as u32).ok_or_else(|| "checked_from_scale_to_value: denominator overflow")?;
                         let base: #big_type = #big_type::try_from(
                             val.try_into().map_err(|_| "checked_from_scale_to_value: can't convert val to base")?)
@@ -229,7 +231,39 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                     #struct_name::checked_from_scale(max_val, 100_000).is_err(),
                     true
                 );
+            }
 
+            #[test]
+            fn test_checked_from_scale_to_value() {
+                let result: i32 = #struct_name::checked_from_scale_to_value(0, 0).unwrap().try_into().unwrap();
+                assert_eq!(result, 0);
+
+                let result: i32 = #struct_name::checked_from_scale_to_value(0, 3).unwrap().try_into().unwrap();
+                assert_eq!(result, 0);
+
+                let result: i32 = #struct_name::checked_from_scale_to_value(42, #scale).unwrap().try_into().unwrap();
+                assert_eq!(result, 42);
+
+                let result: i32 = #struct_name::checked_from_scale_to_value(42, #scale + 1).unwrap().try_into().unwrap();
+                assert_eq!(result, 4);
+
+                let max_val = #struct_name::max_value();
+                assert_eq!(
+                    #struct_name::checked_from_scale_to_value(max_val, 100_000).is_err(),
+                    true
+                );
+
+                let result: i32 = #struct_name::checked_from_scale_to_value(1, 30).unwrap().try_into().unwrap();
+                assert_eq!(result, 0);
+            }
+
+            #[test]
+            fn test_checked_from_decimal_to_value() {
+                let result: i32 = #struct_name::checked_from_decimal_to_value(#struct_name::new(1)).unwrap().try_into().unwrap();
+                assert_eq!(result, 1);
+
+                let result: i32 = #struct_name::checked_from_decimal_to_value(#struct_name::new(42)).unwrap().try_into().unwrap();
+                assert_eq!(result, 42);
             }
         }
     ))
