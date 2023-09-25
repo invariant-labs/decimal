@@ -17,16 +17,26 @@ construct_uint! {
     pub struct U192(3);
 }
 
-
 #[allow(dead_code)]
 pub const fn to_u256(n: u128) -> U256 {
     U256([n as u64, (n >> 64) as u64, 0, 0])
 }
 
-// #[allow(dead_code)]
-// pub const fn to_u320(n: U256) -> U320 {
-//     U320([n as u64, (n >> 64) as u64,0,0])
-// }
+#[allow(dead_code)]
+pub fn u256_to_u320(n: U256) -> U320 {
+    U320([
+        n.low_u64(),
+        (n >> 64).low_u64(),
+        (n >> 128).low_u64(),
+        (n >> 192).low_u64(),
+        0,
+    ])
+}
+
+#[allow(dead_code)]
+pub fn to_u320(n: u128) -> U320 {
+    u256_to_u320(to_u256(n))
+}
 
 #[cfg(test)]
 mod tests {
@@ -77,13 +87,58 @@ mod tests {
             assert_eq!(from, back);
         }
     }
+    #[test]
+    fn test_to_u320() {
+        {
+            let from = 0;
+            let result = to_u320(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = 1;
+            let result = to_u320(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = 1324342342433342342;
+            let result = to_u320(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = u64::MAX as u128;
+            let result = to_u320(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = u64::MAX as u128 + 1;
+            let result = to_u320(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = u64::MAX as u128 + 2;
+            let result = to_u320(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+        {
+            let from = u128::MAX;
+            let result = to_u320(from);
+            let back = result.as_u128();
+            assert_eq!(from, back);
+        }
+    }
 
     #[test]
     fn test_u320_methods() {
-            let _max = U320::MAX;
-            let _from = U320::from(10);
-            let zero = U320::zero();
-            let is_zero =zero.is_zero();
-            assert!(is_zero);
+        let _max = U320::MAX;
+        let _from = U320::from(10);
+        let zero = U320::zero();
+        let is_zero = zero.is_zero();
+        assert!(is_zero);
     }
 }
