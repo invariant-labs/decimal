@@ -38,6 +38,25 @@ pub fn to_u320(n: u128) -> U320 {
     u256_to_u320(to_u256(n))
 }
 
+#[allow(dead_code)]
+pub fn checked_u320_to_u256(n: U320) -> Option<U256> {
+    if !(n >> 256).is_zero() {
+        return None;
+    }
+
+    Some(U256([
+        n.low_u64(),
+        (n >> 64).low_u64(),
+        (n >> 128).low_u64(),
+        (n >> 192).low_u64(),
+    ]))
+}
+
+#[allow(dead_code)]
+pub fn u320_to_u256(n: U320) -> U256 {
+    checked_u320_to_u256(n).unwrap()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -87,6 +106,7 @@ mod tests {
             assert_eq!(from, back);
         }
     }
+
     #[test]
     fn test_to_u320() {
         {
