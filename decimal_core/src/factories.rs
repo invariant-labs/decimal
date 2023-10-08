@@ -253,7 +253,7 @@ pub fn generate_factories(characteristics: DecimalCharacteristics) -> proc_macro
                     true
                 );
 
-                let result: i32 = #struct_name::checked_from_scale_to_value(1, 30).unwrap().try_into().unwrap();
+                let result: i32 = #struct_name::checked_from_scale_to_value(1, 38).unwrap().try_into().unwrap();
                 assert_eq!(result, 0);
             }
 
