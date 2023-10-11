@@ -86,12 +86,19 @@ mod walkthrough {
             let result = percentage.checked_sub(Percentage::new(10));
             assert_eq!(result, Ok(Percentage::new(90)));
         }
+        // checked_div
+        {
+            let result = Price::from_integer(99).checked_div(Price::from_scale(5, 1));
+            assert_eq!(result, Ok(Price::from_integer(198)));
+        }
         // checked big div
         {
             let price = Price::max_instance().checked_big_div(Price::new(50000));
-            assert_eq!(price, Ok(Price::new(68056473384187692692674921486353642291)));
+            assert_eq!(
+                price,
+                Ok(Price::new(68056473384187692692674921486353642291))
+            );
         }
-
         // checked_from_scale
         {
             let overflow_err =
@@ -109,7 +116,8 @@ mod walkthrough {
         }
         // checked_from_scale_to_value
         {
-            let result =  Price::checked_from_scale_to_value(max_price_value, price_scale - 1).unwrap();
+            let result =
+                Price::checked_from_scale_to_value(max_price_value, price_scale - 1).unwrap();
             assert_eq!(
                 result,
                 U256::from_dec_str("3402823669209384634633746074317682114550").unwrap()
@@ -125,7 +133,7 @@ mod walkthrough {
         }
         // checked_from_decimal_to_value
         {
-            let result =  Price::checked_from_decimal_to_value(Price::max_instance()).unwrap();
+            let result = Price::checked_from_decimal_to_value(Price::max_instance()).unwrap();
             assert_eq!(result, U256::from(Price::max_value()));
         }
         // checked_big_div_by_number & checked_big_div_by_number_up

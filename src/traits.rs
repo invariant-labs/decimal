@@ -40,7 +40,6 @@ pub trait Factories<T>: Sized {
     fn from_scale_up(integer: T, scale: u8) -> Self;
 }
 
-
 pub trait BetweenDecimals<T>: Sized {
     fn from_decimal(other: T) -> Self;
     fn checked_from_decimal(other: T) -> std::result::Result<Self, String>;
@@ -70,4 +69,5 @@ pub trait ByNumber<B>: Sized {
 pub trait CheckedOps: Sized {
     fn checked_add(self, rhs: Self) -> std::result::Result<Self, String>;
     fn checked_sub(self, rhs: Self) -> std::result::Result<Self, String>;
+    fn checked_div(self, rhs: Self) -> std::result::Result<Self, String>;
 }
