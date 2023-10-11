@@ -86,6 +86,11 @@ mod walkthrough {
             let result = percentage.checked_sub(Percentage::new(10));
             assert_eq!(result, Ok(Percentage::new(90)));
         }
+        // checked big div
+        {
+            let price = Price::max_instance().checked_big_div(Price::new(50000));
+            assert_eq!(price, Ok(Price::new(68056473384187692692674921486353642291)));
+        }
 
         // checked_from_scale
         {
