@@ -154,6 +154,14 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                 assert_eq!(a.big_div(b), #struct_name::new(2));
             }
 
+
+            #[test]
+            fn test_checked_big_div () {
+                let a = #struct_name::new(29);
+                let b = #struct_name::new(#struct_name::one());
+                assert_eq!(a.big_div(b), #struct_name::new(29));
+            }
+
             #[test]
             fn test_big_div_up () {
                 let a = #struct_name::new(2);
