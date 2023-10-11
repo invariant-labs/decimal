@@ -24,6 +24,17 @@ pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_mac
                     .ok_or_else(|| "checked_sub: (self - rhs) subtraction underflow")?
                 ))
             }
+
+            fn checked_div(self, rhs: Self) -> std::result::Result<Self, String> {
+                Ok(Self::new(
+                        self.get()
+                        .checked_mul(Self::one())
+                        .ok_or_else(|| "checked_div: (self * Self::one()) multiplication overflow")?
+                        .checked_div(rhs.get())
+                        .ok_or_else(|| "checked_div: ((self * Self::one()) / rhs) division by zero")?
+                    )
+                )
+            }
         }
 
         #[cfg(test)]
@@ -52,6 +63,23 @@ pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_mac
                 let b = #struct_name::new(11);
 
                 assert_eq!(a.checked_sub(b), Ok(#struct_name::new(24)));
+            }
+
+            #[test]
+            fn test_checked_div() {
+                let a = #struct_name::new(2);
+                let b = #struct_name::new(#struct_name::one());
+
+                assert_eq!(a.checked_div(b), Ok(#struct_name::new(2)));
+            }
+
+            #[test]
+            fn test_0_checked_div() {
+                let a = #struct_name::new(47);
+                let b = #struct_name::new(0);
+                let result = a.checked_div(b);
+
+                assert!(result.is_err());
             }
 
             #[test]
