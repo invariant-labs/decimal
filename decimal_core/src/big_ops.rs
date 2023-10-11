@@ -82,6 +82,27 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                 )
             }
 
+            fn checked_big_div(self, rhs: T) -> std::result::Result<Self, String> {
+                Ok(
+                    Self::new(
+                        #big_type::try_from(self.get())
+                            .map_err(|_| format!("decimal: lhs value can't fit into `{}` type in {}::big_div()", #big_str, #name_str))?
+                            .checked_mul(
+                                T::one()
+                            )
+                            .ok_or_else(|| format!("decimal: overflow in method {}::big_div()", #name_str))?
+                            .checked_div(
+                                rhs.get()
+                                    .try_into()
+                                    .map_err(|_| format!("decimal: rhs value can't fit into `{}` type in {}::big_div()", #big_str, #name_str))?
+                            )
+                            .ok_or_else(|| format!("decimal: overflow in method {}::big_div()", #name_str))?
+                            .try_into()
+                            .map_err(|_| format!("decimal: overflow casting result to `{}` type in method {}::big_div()", #underlying_str, #name_str))?
+                    )
+                )
+            }
+
             fn big_div_up(self, rhs: T) -> Self {
                 Self::new(
                     #big_type::try_from(self.get())
@@ -131,6 +152,14 @@ pub fn generate_big_ops(characteristics: DecimalCharacteristics) -> proc_macro::
                 let a = #struct_name::new(2);
                 let b = #struct_name::new(#struct_name::one());
                 assert_eq!(a.big_div(b), #struct_name::new(2));
+            }
+
+
+            #[test]
+            fn test_checked_big_div () {
+                let a = #struct_name::new(29);
+                let b = #struct_name::new(#struct_name::one());
+                assert_eq!(a.big_div(b), #struct_name::new(29));
             }
 
             #[test]

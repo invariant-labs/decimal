@@ -16,10 +16,11 @@ pub trait Decimal {
     fn almost_one<T: TryFrom<u128>>() -> T;
 }
 
-pub trait BigOps<T> {
+pub trait BigOps<T>: Sized {
     fn big_mul(self, rhs: T) -> Self;
     fn big_mul_up(self, rhs: T) -> Self;
     fn big_div(self, rhs: T) -> Self;
+    fn checked_big_div(self, rhs: T) -> std::result::Result<Self, String>;
     fn big_div_up(self, rhs: T) -> Self;
 }
 
