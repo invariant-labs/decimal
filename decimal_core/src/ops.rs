@@ -1,3 +1,4 @@
+use alloc::string::ToString;
 use quote::quote;
 
 use crate::utils::string_to_ident;
@@ -16,7 +17,7 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
     let module_name = string_to_ident("tests_", &name_str);
 
     proc_macro::TokenStream::from(quote!(
-        impl std::ops::Add for #struct_name {
+        impl core::ops::Add for #struct_name {
             type Output = Self;
             fn add(self, rhs: Self) -> Self {
                 Self::new(self.get()
@@ -26,7 +27,7 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
             }
         }
 
-        impl std::ops::Sub for #struct_name {
+        impl core::ops::Sub for #struct_name {
             type Output = #struct_name;
 
             fn sub(self, rhs: Self) -> #struct_name {
@@ -37,7 +38,7 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
             }
         }
 
-        impl<T: Decimal> std::ops::Mul<T> for #struct_name
+        impl<T: Decimal> core::ops::Mul<T> for #struct_name
         where
             T::U: TryInto<#underlying_type>,
         {
@@ -49,16 +50,16 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
                         .checked_mul(
                             rhs.get()
                                 .try_into()
-                                .unwrap_or_else(|_| std::panic!("decimal: rhs value can't fit into `{}` type in {}::mul()", #underlying_str, #name_str))
+                                .unwrap_or_else(|_| core::panic!("decimal: rhs value can't fit into `{}` type in {}::mul()", #underlying_str, #name_str))
                         )
-                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::mul()", #name_str))
+                        .unwrap_or_else(|| core::panic!("decimal: overflow in method {}::mul()", #name_str))
                         .checked_div(T::one())
-                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::mul()", #name_str))
+                        .unwrap_or_else(|| core::panic!("decimal: overflow in method {}::mul()", #name_str))
                 )
             }
         }
 
-        impl<T: Decimal> std::ops::Div<T> for #struct_name
+        impl<T: Decimal> core::ops::Div<T> for #struct_name
         where
             T::U: TryInto<#underlying_type>,
         {
@@ -68,36 +69,36 @@ pub fn generate_ops(characteristics: DecimalCharacteristics) -> proc_macro::Toke
                 Self::new(
                     self.get()
                         .checked_mul(T::one())
-                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div()", #name_str))
+                        .unwrap_or_else(|| core::panic!("decimal: overflow in method {}::div()", #name_str))
                         .checked_div(
                             rhs.get()
                                 .try_into()
-                                .unwrap_or_else(|_| std::panic!("decimal: rhs value can't fit into `{}` type in {}::div()", #underlying_str, #name_str))
+                                .unwrap_or_else(|_| core::panic!("decimal: rhs value can't fit into `{}` type in {}::div()", #underlying_str, #name_str))
                         )
-                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div()", #name_str))
+                        .unwrap_or_else(|| core::panic!("decimal: overflow in method {}::div()", #name_str))
                 )
             }
         }
 
-        impl std::ops::AddAssign for #struct_name {
+        impl core::ops::AddAssign for #struct_name {
             fn add_assign(&mut self, rhs: Self)  {
                 *self = *self + rhs
             }
         }
 
-        impl std::ops::SubAssign for #struct_name {
+        impl core::ops::SubAssign for #struct_name {
             fn sub_assign(&mut self, rhs: Self)  {
                 *self = *self - rhs
             }
         }
 
-        impl std::ops::MulAssign for #struct_name {
+        impl core::ops::MulAssign for #struct_name {
             fn mul_assign(&mut self, rhs: Self)  {
                 *self = *self * rhs
             }
         }
 
-        impl std::ops::DivAssign for #struct_name {
+        impl core::ops::DivAssign for #struct_name {
             fn div_assign(&mut self, rhs: Self)  {
                 *self = *self / rhs
             }

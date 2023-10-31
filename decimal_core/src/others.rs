@@ -1,3 +1,4 @@
+use alloc::string::ToString;
 use quote::quote;
 
 use crate::utils::string_to_ident;
@@ -20,41 +21,44 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
         where
             T::U: TryInto<#underlying_type>,
         {
+            // r::almost_one() = r::one() - 1
+            // mul_up(l, r) = l * r + r::almost_one() / r::one();
             fn mul_up(self, rhs: T) -> Self {
                 Self::new(
                     self.get()
                         .checked_mul(
                             rhs.get()
                                 .try_into()
-                                .unwrap_or_else(|_| std::panic!("decimal: rhs value can't fit into `{}` type in {}::mul_up()", #underlying_str, #name_str))
+                                .unwrap_or_else(|_| core::panic!("decimal: rhs value can't fit into `{}` type in {}::mul_up()", #underlying_str, #name_str))
                         )
-                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::mul_up()", #name_str))
+                        .unwrap_or_else(|| core::panic!("decimal: overflow in method {}::mul_up()", #name_str))
                         .checked_add(T::almost_one())
-                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::mul_up()", #name_str))
+                        .unwrap_or_else(|| core::panic!("decimal: overflow in method {}::mul_up()", #name_str))
                         .checked_div(T::one())
-                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::mul_up()", #name_str))
+                        .unwrap_or_else(|| core::panic!("decimal: overflow in method {}::mul_up()", #name_str))
                 )
             }
 
+            // div_up(n/d) = n * d::one() + d - 1 / d;
             fn div_up(self, rhs: T) -> Self {
                 Self::new(
                     self.get()
                         .checked_mul(T::one())
-                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div_up()", #name_str))
+                        .unwrap_or_else(|| core::panic!("decimal: overflow in method {}::div_up()", #name_str))
                         .checked_add(
                             rhs.get()
                                 .try_into()
-                                .unwrap_or_else(|_| std::panic!("decimal: rhs value can't fit into `{}` type in {}::div_up()", #underlying_str, #name_str))
+                                .unwrap_or_else(|_| core::panic!("decimal: rhs value can't fit into `{}` type in {}::div_up()", #underlying_str, #name_str))
                                 .checked_sub(#underlying_type::try_from(1u128).unwrap())
-                                .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div_up()", #name_str))
+                                .unwrap_or_else(|| core::panic!("decimal: overflow in method {}::div_up()", #name_str))
                             )
-                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div_up()", #name_str))
+                        .unwrap_or_else(|| core::panic!("decimal: overflow in method {}::div_up()", #name_str))
                         .checked_div(
                             rhs.get()
                                 .try_into()
-                                .unwrap_or_else(|_| std::panic!("decimal: rhs value can't fit into `{}` type in {}::div_up()", #underlying_str, #name_str))
+                                .unwrap_or_else(|_| core::panic!("decimal: rhs value can't fit into `{}` type in {}::div_up()", #underlying_str, #name_str))
                         )
-                        .unwrap_or_else(|| std::panic!("decimal: overflow in method {}::div_up()", #name_str))
+                        .unwrap_or_else(|| core::panic!("decimal: overflow in method {}::div_up()", #name_str))
                 )
             }
         }
@@ -69,8 +73,8 @@ pub fn generate_others(characteristics: DecimalCharacteristics) -> proc_macro::T
             }
         }
 
-        impl std::fmt::Display for #struct_name {
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        impl core::fmt::Display for #struct_name {
+            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
                 if Self::scale() > 0 {
                     let mut decimal_places = self.get().checked_rem(Self::one()).unwrap();
                     let mut non_zero_tail = 0;
