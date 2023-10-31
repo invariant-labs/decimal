@@ -1,33 +1,36 @@
+#![no_std]
+
+extern crate alloc;
+
 mod traits;
 mod uint;
-mod walkthrough;
-
-pub use crate::uint::U256;
-
+pub use crate::uint::{checked_u320_to_u256, to_u256, u256_to_u320, U256, U320};
 pub use num_traits;
 pub use safe_decimal_core::decimal;
+
 pub use traits::*;
-
-#[cfg(test)]
-#[decimal(3, u128)]
-#[derive(Default, std::fmt::Debug, Clone, Copy, PartialEq)]
-struct R(u32);
-
-#[cfg(test)]
-#[decimal(1)]
-#[derive(Default, std::fmt::Debug, Clone, Copy, PartialEq)]
-struct Q {
-    v: u16,
-}
-
-#[cfg(test)]
-#[decimal(0)]
-#[derive(Default, std::fmt::Debug, Clone, Copy, PartialEq)]
-struct N(u8);
 
 #[cfg(test)]
 pub mod tests {
     use super::*;
+    use crate::alloc::string::ToString;
+
+    #[cfg(test)]
+    #[decimal(3, u128)]
+    #[derive(Default, Debug, Clone, Copy, PartialEq)]
+    struct R(u32);
+
+    #[cfg(test)]
+    #[decimal(1)]
+    #[derive(Default, Debug, Clone, Copy, PartialEq)]
+    struct Q {
+        v: u16,
+    }
+
+    #[cfg(test)]
+    #[decimal(0)]
+    #[derive(Default, Debug, Clone, Copy, PartialEq)]
+    struct N(u8);
 
     #[test]
     fn test_from_decimal() {
