@@ -1,3 +1,4 @@
+use alloc::string::ToString;
 use quote::quote;
 
 use crate::utils::string_to_ident;
@@ -27,7 +28,7 @@ pub fn generate_by_number(characteristics: DecimalCharacteristics) -> proc_macro
                 )
             }
 
-            fn checked_big_div_by_number(self, rhs: #big_type) -> std::result::Result<Self, String> {
+            fn checked_big_div_by_number(self, rhs: #big_type) -> core::result::Result<Self, alloc::string::String> {
                 Ok(Self::new(
                     #big_type::try_from(self.get()).map_err(|_| "checked_big_div_by_number: can't convert self to big_type")?
                     .checked_mul(Self::checked_one()?).ok_or_else(|| "checked_big_div_by_number: (self * Self::one()) multiplication overflow")?
@@ -50,7 +51,7 @@ pub fn generate_by_number(characteristics: DecimalCharacteristics) -> proc_macro
                 )
             }
 
-            fn checked_big_div_by_number_up(self, rhs: #big_type) -> std::result::Result<Self, String> {
+            fn checked_big_div_by_number_up(self, rhs: #big_type) -> core::result::Result<Self, alloc::string::String> {
                 Ok(Self::new(
                     #big_type::try_from(self.get()).map_err(|_| "checked_big_div_by_number_up: can't convert self to big_type")?
                     .checked_mul(Self::checked_one()?).ok_or_else(|| "checked_big_div_by_number_up: (self * Self::one()) multiplication overflow")?
@@ -67,23 +68,24 @@ pub fn generate_by_number(characteristics: DecimalCharacteristics) -> proc_macro
         where
             T::U: TryInto<#big_type>,
         {
-
+            // mul(l/r) = U256::from(l) * U256::from(r) / U256::from(r::one())
             fn big_mul_to_value(self, rhs: T) -> #big_type {
                 #big_type::try_from(self.get()).unwrap()
                     .checked_mul(
                         rhs.get()
-                            .try_into().unwrap_or_else(|_| std::panic!("rhs value could not be converted to big type in `big_mul`")),
+                            .try_into().unwrap_or_else(|_| core::panic!("rhs value could not be converted to big type in `big_mul`")),
                     ).unwrap()
                     .checked_div(
                         T::one()
                     ).unwrap()
             }
 
+            // mul_up(l/r) = U256::from(l) * U256::from(r) + U256::from(r::almost_one()) / U256::from(r::one())
             fn big_mul_to_value_up(self, rhs: T) -> #big_type {
                 #big_type::try_from(self.get()).unwrap()
                     .checked_mul(
                         rhs.get()
-                            .try_into().unwrap_or_else(|_| std::panic!("rhs value could not be converted to big type in `big_mul_up`")),
+                            .try_into().unwrap_or_else(|_| core::panic!("rhs value could not be converted to big type in `big_mul_up`")),
                     ).unwrap()
                     .checked_add(T::almost_one()).unwrap()
                     .checked_div(

@@ -1,3 +1,4 @@
+use alloc::string::ToString;
 use quote::quote;
 
 use crate::utils::string_to_ident;
@@ -11,21 +12,21 @@ pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_mac
 
     proc_macro::TokenStream::from(quote!(
         impl CheckedOps for #struct_name {
-            fn checked_add(self, rhs: Self) -> std::result::Result<Self, String> {
+            fn checked_add(self, rhs: Self) -> core::result::Result<Self, alloc::string::String> {
                 Ok(Self::new(
                     self.get().checked_add(rhs.get())
                     .ok_or_else(|| "checked_add: (self + rhs) additional overflow")?
                 ))
             }
 
-            fn checked_sub(self, rhs: Self) -> std::result::Result<Self, String> {
+            fn checked_sub(self, rhs: Self) -> core::result::Result<Self, alloc::string::String> {
                 Ok(Self::new(
                     self.get().checked_sub(rhs.get())
                     .ok_or_else(|| "checked_sub: (self - rhs) subtraction underflow")?
                 ))
             }
 
-            fn checked_div(self, rhs: Self) -> std::result::Result<Self, String> {
+            fn checked_div(self, rhs: Self) -> core::result::Result<Self, alloc::string::String> {
                 Ok(Self::new(
                         self.get()
                         .checked_mul(Self::one())
@@ -36,6 +37,9 @@ pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_mac
                 )
             }
         }
+
+
+
 
         #[cfg(test)]
         pub mod #module_name {
@@ -69,7 +73,6 @@ pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_mac
             fn test_checked_div() {
                 let a = #struct_name::new(2);
                 let b = #struct_name::new(#struct_name::one());
-
                 assert_eq!(a.checked_div(b), Ok(#struct_name::new(2)));
             }
 
@@ -78,7 +81,6 @@ pub fn generate_checked_ops(characteristics: DecimalCharacteristics) -> proc_mac
                 let a = #struct_name::new(47);
                 let b = #struct_name::new(0);
                 let result = a.checked_div(b);
-
                 assert!(result.is_err());
             }
 

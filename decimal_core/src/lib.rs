@@ -1,3 +1,7 @@
+#![no_std]
+
+extern crate alloc;
+use alloc::{string::ToString, vec::Vec};
 use quote::{quote, ToTokens};
 use syn::parse_macro_input;
 
@@ -31,7 +35,7 @@ pub fn decimal(
     let big_type = match args.len() {
         1 => string_to_ident("", "U256"),
         2 => string_to_ident("", args[1].trim()),
-        _ => std::panic!("decimal: invalid number of parameters"),
+        _ => panic!("decimal: invalid number of parameters"),
     };
 
     assert!(parsed_scale <= 38, "scale too big");

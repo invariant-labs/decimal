@@ -39,7 +39,7 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
             fn here<T: TryFrom<Self::U>>(&self) -> T {
                 match T::try_from(self.#field_name) {
                     Ok(v) => v,
-                    Err(_) => std::panic!("could not parse {} to {}", "T", "u8"),
+                    Err(_) => core::panic!("could not parse {} to {}", "T", "u8"),
                 }
             }
 
@@ -50,20 +50,20 @@ pub fn generate_base(characteristics: DecimalCharacteristics) -> proc_macro::Tok
             fn one<T: TryFrom<u128>>() -> T {
                 match T::try_from(#denominator) {
                     Ok(v) => v,
-                    Err(_) => std::panic!("denominator wouldn't fit into this type",),
+                    Err(_) => core::panic!("denominator wouldn't fit into this type",),
                 }
             }
 
-            fn checked_one<T: TryFrom<u128>>() -> std::result::Result<T, String> where
-                T::Error: std::fmt::Display,
+            fn checked_one<T: TryFrom<u128>>() -> core::result::Result<T, alloc::string::String> where
+                T::Error: core::fmt::Display,
             {
-                T::try_from(#denominator).map_err(|err| format!("checked_one: can not get one to type {} : {}", std::any::type_name::<T>(), err.to_string()))
+                T::try_from(#denominator).map_err(|err| alloc::format!("checked_one: can not get one to type {} : {}", core::any::type_name::<T>(), alloc::string::ToString::to_string(&err)))
             }
 
             fn almost_one<T: TryFrom<u128>>() -> T {
                 match T::try_from(#almost_denominator) {
                     Ok(v) => v,
-                    Err(_) => std::panic!("denominator wouldn't fit into this type",),
+                    Err(_) => core::panic!("denominator wouldn't fit into this type",),
                 }
             }
         }

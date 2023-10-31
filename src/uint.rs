@@ -18,6 +18,25 @@ construct_uint! {
 }
 
 #[allow(dead_code)]
+pub fn checked_u320_to_u256(n: U320) -> Option<U256> {
+    if !(n >> 256).is_zero() {
+        return None;
+    }
+
+    Some(U256([
+        n.low_u64(),
+        (n >> 64).low_u64(),
+        (n >> 128).low_u64(),
+        (n >> 192).low_u64(),
+    ]))
+}
+
+#[allow(dead_code)]
+pub fn u320_to_u256(n: U320) -> U256 {
+    checked_u320_to_u256(n).unwrap()
+}
+
+#[allow(dead_code)]
 pub const fn to_u256(n: u128) -> U256 {
     U256([n as u64, (n >> 64) as u64, 0, 0])
 }
@@ -36,25 +55,6 @@ pub fn u256_to_u320(n: U256) -> U320 {
 #[allow(dead_code)]
 pub fn to_u320(n: u128) -> U320 {
     u256_to_u320(to_u256(n))
-}
-
-#[allow(dead_code)]
-pub fn checked_u320_to_u256(n: U320) -> Option<U256> {
-    if !(n >> 256).is_zero() {
-        return None;
-    }
-
-    Some(U256([
-        n.low_u64(),
-        (n >> 64).low_u64(),
-        (n >> 128).low_u64(),
-        (n >> 192).low_u64(),
-    ]))
-}
-
-#[allow(dead_code)]
-pub fn u320_to_u256(n: U320) -> U256 {
-    checked_u320_to_u256(n).unwrap()
 }
 
 #[cfg(test)]
@@ -151,6 +151,15 @@ mod tests {
             let back = result.as_u128();
             assert_eq!(from, back);
         }
+    }
+
+    #[test]
+    fn test_u320_methods() {
+        let _max = U320::MAX;
+        let _from = U320::from(10);
+        let zero = U320::zero();
+        let is_zero = zero.is_zero();
+        assert!(is_zero);
     }
 
     #[test]
